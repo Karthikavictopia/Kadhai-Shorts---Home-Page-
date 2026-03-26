@@ -108,8 +108,8 @@
     .carousel-wrap::after {
       content: '';
       position: absolute;
-      top: 0; bottom: 28px;
-      width: 60px;
+      top: 0; bottom: 42px;
+      width: 48px;
       z-index: 10;
       pointer-events: none;
     }
@@ -124,26 +124,26 @@
 
     .carousel-track {
       display: flex;
-      gap: 6px;
+      gap: 10px;
       overflow-x: scroll;
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
       padding-bottom: 12px;
-      /* first/last card can land in centre */
-      padding-left: calc(50% - 130px);
-      padding-right: calc(50% - 130px);
+      padding-left: calc(50% - 155px);
+      padding-right: calc(50% - 155px);
     }
     .carousel-track::-webkit-scrollbar { display: none; }
 
     .c-card {
-      flex: 0 0 260px;
-      height: 340px;
+      flex: 0 0 310px;
+      height: 400px;
       scroll-snap-align: center;
-      border-radius: 16px;
+      scroll-snap-stop: always;
+      border-radius: 18px;
       overflow: hidden;
       position: relative;
-      transform: scale(0.78);
+      transform: scale(0.84);
       transform-origin: center center;
       transition: transform 0.3s cubic-bezier(.25,.46,.45,.94),
                   box-shadow 0.3s ease,
@@ -155,7 +155,7 @@
     .c-card.active {
       transform: scale(1) !important;
       opacity: 1 !important;
-      box-shadow: 0 16px 48px rgba(207,46,78,0.4), 0 4px 16px rgba(0,0,0,0.6);
+      box-shadow: 0 20px 56px rgba(207,46,78,0.45), 0 6px 20px rgba(0,0,0,0.7);
       z-index: 3;
     }
 
@@ -209,7 +209,7 @@
       justify-content: center;
       align-items: center;
       gap: 5px;
-      padding: 2px 0 6px;
+      padding: 14px 0 10px;
     }
     .dot {
       width: 5px; height: 5px;
@@ -234,23 +234,18 @@
     .scroll-body::-webkit-scrollbar { display: none; }
 
     /* section */
-    .section { padding: 20px 20px 0; }
+    .section { padding: 20px 0 0; }
     .section-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 14px;
+      padding: 0 20px;
     }
     .section-title {
       font-size: 17px;
       font-weight: 700;
       color: var(--white);
-    }
-    .see-all {
-      font-size: 12px;
-      color: var(--primary);
-      font-weight: 500;
-      cursor: pointer;
     }
 
     /* ── show card row ── */
@@ -259,17 +254,17 @@
       gap: 12px;
       overflow-x: auto;
       scrollbar-width: none;
-      padding-bottom: 4px;
+      padding: 0 20px 4px;
     }
     .row-scroll::-webkit-scrollbar { display: none; }
 
     .s-card {
-      flex: 0 0 120px;
+      flex: 0 0 150px;
       cursor: pointer;
     }
     .s-thumb {
-      width: 120px;
-      height: 170px;
+      width: 150px;
+      height: 212px;
       border-radius: 10px;
       overflow: hidden;
       position: relative;
@@ -282,11 +277,11 @@
     .s-thumb .s-gradient {
       position: absolute;
       inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 55%);
+      background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, transparent 55%);
     }
     .s-thumb .s-ep {
       position: absolute;
-      top: 7px; right: 7px;
+      top: 8px; right: 8px;
       background: rgba(33,33,33,0.82);
       color: #fff;
       font-size: 9px;
@@ -296,34 +291,112 @@
     }
     .s-thumb .s-next {
       position: absolute;
-      bottom: 7px; left: 7px;
+      bottom: 8px; left: 8px;
       background: rgba(33,33,33,0.82);
       color: #fff;
       font-size: 9px;
       padding: 2px 6px;
       border-radius: 5px;
     }
-    .s-title {
+    /* show name inside thumbnail */
+    .s-thumb .s-name {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 32px 8px 9px;
       font-size: 12px;
       font-weight: 600;
-      color: var(--white);
-      margin-top: 7px;
+      color: #fff;
       line-height: 1.3;
+      z-index: 3;
     }
-    .s-genre {
-      font-size: 11px;
+    /* ── continue watching extras ── */
+    .cw-play {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px; height: 40px;
+      background: rgba(0,0,0,0.52);
+      border: 1.5px solid rgba(255,255,255,0.32);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 4;
+    }
+    .cw-progress {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: rgba(255,255,255,0.18);
+      z-index: 4;
+    }
+    .cw-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #F16623 0%, #E71F2C 100%);
+      border-radius: 0 2px 0 0;
+    }
+    /* episode label */
+    .cw-ep {
+      position: absolute;
+      bottom: 8px; left: 8px;
+      background: rgba(15,15,15,0.72);
       color: var(--grey-text);
-      margin-top: 2px;
+      font-size: 9px;
+      font-weight: 500;
+      padding: 2px 6px;
+      border-radius: 5px;
+      z-index: 4;
+    }
+
+    /* trending rank number */
+    .s-thumb .tr-rank {
+      position: absolute;
+      bottom: 4px; left: 6px;
+      font-size: 58px;
+      font-weight: 900;
+      line-height: 1;
+      z-index: 3;
+      letter-spacing: -3px;
+      background: linear-gradient(135deg, #F16623 0%, #E71F2C 40%, #991C4A 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.9));
+    }
+    /* trending fire badge */
+    .s-thumb .tr-badge {
+      position: absolute;
+      top: 8px; left: 8px;
+      background: var(--brand-gradient);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 600;
+      padding: 3px 7px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      z-index: 3;
+    }
+    /* trending name — bottom right (avoids rank number) */
+    .s-thumb .tr-name {
+      position: absolute;
+      bottom: 10px; right: 8px;
+      left: 55px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.3;
+      z-index: 3;
+      text-align: right;
     }
 
     /* ── coming soon ── */
     .cs-card {
-      flex: 0 0 120px;
+      flex: 0 0 150px;
       cursor: pointer;
     }
     .cs-thumb {
-      width: 120px;
-      height: 170px;
+      width: 150px;
+      height: 212px;
       border-radius: 10px;
       overflow: hidden;
       position: relative;
@@ -336,23 +409,50 @@
     .cs-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 55%);
+      background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.2) 60%, transparent 100%);
+    }
+    .cs-thumb .cs-badge {
+      position: absolute;
+      top: 8px; left: 8px;
+      background: rgba(15,15,15,0.72);
+      border: 1px solid rgba(255,255,255,0.18);
+      color: var(--grey-text);
+      font-size: 9px;
+      font-weight: 500;
+      padding: 3px 7px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      z-index: 3;
+    }
+    .cs-thumb .cs-name {
+      position: absolute;
+      bottom: 38px; left: 0; right: 0;
+      padding: 0 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.3;
+      z-index: 3;
     }
     .reserve-btn {
       position: absolute;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #5c5c5c;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(6px);
+      border-top: 1px solid rgba(255,255,255,0.12);
       color: #fff;
       font-size: 10px;
       font-weight: 600;
-      padding: 5px 12px;
-      border-radius: 10px;
+      padding: 8px 0;
+      border-radius: 0 0 10px 10px;
       white-space: nowrap;
       display: flex;
       align-items: center;
-      gap: 4px;
+      justify-content: center;
+      gap: 5px;
+      z-index: 3;
     }
 
     /* ── bottom nav ── */
@@ -427,8 +527,10 @@
           <line x1="9" y1="5" x2="9" y2="19"/>
         </svg>
       </div>
-      <!-- GIF -->
-      <div class="gif-btn">GIF</div>
+      <!-- Gift -->
+      <div class="icon-btn" style="background:#1e1e1e;">
+        <img src="assets/images/gift-icon.png" alt="Gift" width="22" height="22" style="object-fit:contain;"/>
+      </div>
     </div>
   </div>
 
@@ -491,88 +593,99 @@
     <div class="section">
       <div class="section-header">
         <div class="section-title">Continue Watching</div>
-        <div class="see-all">See all</div>
       </div>
       <div class="row-scroll">
         <div class="s-card">
           <div class="s-thumb">
             <img src="assets/images/home-turf-hijinks.png" alt=""/>
             <div class="s-gradient"></div>
-            <span class="s-next">Next: Ep 1</span>
+            <div class="cw-play"><svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="cw-ep">Ep 1 · 12 min left</div>
+            <div class="cw-progress"><div class="cw-bar" style="width:62%"></div></div>
           </div>
-          <div class="s-title">Home Turf Hijinks</div>
         </div>
         <div class="s-card">
           <div class="s-thumb">
             <img src="assets/images/super-subbus-challenge.png" alt=""/>
             <div class="s-gradient"></div>
-            <span class="s-next">Next: Ep 1</span>
+            <div class="cw-play"><svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="cw-ep">Ep 1 · 8 min left</div>
+            <div class="cw-progress"><div class="cw-bar" style="width:30%"></div></div>
           </div>
-          <div class="s-title">Super Subbu's Challenge</div>
         </div>
         <div class="s-card">
           <div class="s-thumb">
             <img src="assets/images/love-at-first-sight.png" alt=""/>
             <div class="s-gradient"></div>
-            <span class="s-next">Next: Ep 2</span>
+            <div class="cw-play"><svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="cw-ep">Ep 2 · 5 min left</div>
+            <div class="cw-progress"><div class="cw-bar" style="width:80%"></div></div>
           </div>
-          <div class="s-title">Love at First Sight</div>
         </div>
         <div class="s-card">
           <div class="s-thumb">
             <img src="assets/images/coastal-secrets.png" alt=""/>
             <div class="s-gradient"></div>
-            <span class="s-next">Next: Ep 3</span>
+            <div class="cw-play"><svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="cw-ep">Ep 3 · 15 min left</div>
+            <div class="cw-progress"><div class="cw-bar" style="width:45%"></div></div>
           </div>
-          <div class="s-title">Night Secret</div>
         </div>
       </div>
     </div>
 
-    <!-- Latest Releases -->
+    <!-- Trending -->
     <div class="section" style="margin-top:24px;">
       <div class="section-header">
-        <div class="section-title">Latest Releases</div>
-        <div class="see-all">See all</div>
+        <div style="display:flex; align-items:center; gap:7px;">
+          <svg width="16" height="16" viewBox="0 0 24 24"><defs><linearGradient id="g-fire" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F16623"/><stop offset="35%" stop-color="#E71F2C"/><stop offset="100%" stop-color="#991C4A"/></linearGradient></defs><path fill="url(#g-fire)" d="M13.5 0.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg>
+          <div class="section-title">Trending</div>
+        </div>
       </div>
       <div class="row-scroll">
         <div class="s-card">
           <div class="s-thumb">
             <img src="assets/images/wifi-woes-at-home.png" alt=""/>
             <div class="s-gradient"></div>
-            <span class="s-ep">29 Eps</span>
+            <div class="tr-badge">
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="white"><path d="M13.5 0.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67z"/></svg>
+              Hot
+            </div>
+            <span class="tr-rank">1</span>
           </div>
-          <div class="s-title">Wi-Fi Woes at Home</div>
-          <div class="s-genre">Slice of Life</div>
         </div>
         <div class="s-card">
           <div class="s-thumb">
             <img src="assets/images/coastal-secrets.png" alt=""/>
             <div class="s-gradient"></div>
-            <span class="s-ep">15 Eps</span>
-            <span class="s-next">Next: Ep 2</span>
+            <div class="tr-badge">
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="white"><path d="M13.5 0.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67z"/></svg>
+              Hot
+            </div>
+            <span class="tr-rank">2</span>
           </div>
-          <div class="s-title">Night Secret</div>
-          <div class="s-genre">Thriller</div>
         </div>
         <div class="s-card">
           <div class="s-thumb">
             <img src="assets/images/public-prank-party.png" alt=""/>
             <div class="s-gradient"></div>
-            <span class="s-ep">29 Eps</span>
-            <span class="s-next">Next: Ep 2</span>
+            <div class="tr-badge">
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="white"><path d="M13.5 0.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67z"/></svg>
+              Hot
+            </div>
+            <span class="tr-rank">3</span>
           </div>
-          <div class="s-title">Public Prank Party</div>
-          <div class="s-genre">Comedy</div>
         </div>
         <div class="s-card">
           <div class="s-thumb">
             <img src="assets/images/rainy-rendezvous.png" alt=""/>
             <div class="s-gradient"></div>
-            <span class="s-ep">10 Eps</span>
+            <div class="tr-badge">
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="white"><path d="M13.5 0.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67z"/></svg>
+              Hot
+            </div>
+            <span class="tr-rank">4</span>
           </div>
-          <div class="s-title">Rainy Rendezvous</div>
-          <div class="s-genre">Romance</div>
         </div>
       </div>
     </div>
@@ -581,61 +694,71 @@
     <div class="section" style="margin-top:24px;">
       <div class="section-header">
         <div style="display:flex; align-items:center; gap:7px;">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="#CF2E4E"><path d="M12 2a10 10 0 110 20A10 10 0 0112 2zm1 5h-2v6l5 3 1-1.73-4-2.27V7z"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24"><defs><linearGradient id="g-clock" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F16623"/><stop offset="35%" stop-color="#E71F2C"/><stop offset="100%" stop-color="#991C4A"/></linearGradient></defs><path fill="url(#g-clock)" d="M12 2a10 10 0 110 20A10 10 0 0112 2zm1 5h-2v6l5 3 1-1.73-4-2.27V7z"/></svg>
           <div class="section-title">Coming Soon</div>
         </div>
-        <div class="see-all">Notify me</div>
       </div>
       <div class="row-scroll">
         <div class="cs-card">
           <div class="cs-thumb">
             <img src="assets/images/rainy-rendezvous.png" alt=""/>
             <div class="cs-overlay"></div>
+            <div class="cs-badge">
+              <svg width="8" height="8" viewBox="0 0 24 24" fill="#929596"><path d="M12 2a10 10 0 110 20A10 10 0 0112 2zm1 5h-2v6l5 3 1-1.73-4-2.27V7z"/></svg>
+              Apr 2026
+            </div>
+            <div class="cs-name">Rainy Rendezvous</div>
             <div class="reserve-btn">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M12 22a10 10 0 110-20 10 10 0 010 20zm0-2a8 8 0 100-16 8 8 0 000 16zm1-9h4l-5 5-5-5h4V7h2v4z"/></svg>
-              Reserve
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+              Notify Me
             </div>
           </div>
-          <div class="s-title">Rainy Rendezvous</div>
-          <div class="s-genre">Romance</div>
         </div>
         <div class="cs-card">
           <div class="cs-thumb">
             <img src="assets/images/kitchen-kadhai.png" alt=""/>
             <div class="cs-overlay"></div>
+            <div class="cs-badge">
+              <svg width="8" height="8" viewBox="0 0 24 24" fill="#929596"><path d="M12 2a10 10 0 110 20A10 10 0 0112 2zm1 5h-2v6l5 3 1-1.73-4-2.27V7z"/></svg>
+              May 2026
+            </div>
+            <div class="cs-name">Kitchen Kadhai</div>
             <div class="reserve-btn">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M12 22a10 10 0 110-20 10 10 0 010 20zm0-2a8 8 0 100-16 8 8 0 000 16zm1-9h4l-5 5-5-5h4V7h2v4z"/></svg>
-              Reserve
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+              Notify Me
             </div>
           </div>
-          <div class="s-title">Kitchen Kadhai</div>
-          <div class="s-genre">Slice of Life</div>
         </div>
         <div class="cs-card">
           <div class="cs-thumb">
             <img src="assets/images/coastal-secrets.png" alt=""/>
             <div class="cs-overlay"></div>
+            <div class="cs-badge">
+              <svg width="8" height="8" viewBox="0 0 24 24" fill="#929596"><path d="M12 2a10 10 0 110 20A10 10 0 0112 2zm1 5h-2v6l5 3 1-1.73-4-2.27V7z"/></svg>
+              May 2026
+            </div>
+            <div class="cs-name">Locked Room</div>
             <div class="reserve-btn">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M12 22a10 10 0 110-20 10 10 0 010 20zm0-2a8 8 0 100-16 8 8 0 000 16zm1-9h4l-5 5-5-5h4V7h2v4z"/></svg>
-              Reserve
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+              Notify Me
             </div>
           </div>
-          <div class="s-title">Locked Room</div>
-          <div class="s-genre">Thriller</div>
         </div>
         <div class="cs-card">
           <div class="cs-thumb">
             <img src="assets/images/super-subbus-challenge.png" alt=""/>
             <div class="cs-overlay"></div>
+            <div class="cs-badge">
+              <svg width="8" height="8" viewBox="0 0 24 24" fill="#929596"><path d="M12 2a10 10 0 110 20A10 10 0 0112 2zm1 5h-2v6l5 3 1-1.73-4-2.27V7z"/></svg>
+              Jun 2026
+            </div>
+            <div class="cs-name">Village Tales</div>
             <div class="reserve-btn">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M12 22a10 10 0 110-20 10 10 0 010 20zm0-2a8 8 0 100-16 8 8 0 000 16zm1-9h4l-5 5-5-5h4V7h2v4z"/></svg>
-              Reserve
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+              Notify Me
             </div>
           </div>
-          <div class="s-title">Village Tales</div>
-          <div class="s-genre">Comedy</div>
-
-        </ div>
+        </div>
       </div>
     </div>
 
@@ -678,79 +801,116 @@
 </div><!-- /phone -->
 
 <script>
-  const track  = document.getElementById('carousel');
-  const cards  = Array.from(track.querySelectorAll('.c-card'));
-  const dots   = Array.from(document.getElementById('dots').querySelectorAll('.dot'));
-  const videos = cards.map(c => c.querySelector('video'));
+  const track   = document.getElementById('carousel');
+  const dotsEl  = Array.from(document.getElementById('dots').querySelectorAll('.dot'));
+  const CARD_W  = 310;
+  const GAP     = 10;
+  const N       = 5; // real card count
 
-  const CARD_W = 260;
-  const GAP    = 6;
+  /* ── Clone cards for infinite loop ── */
+  const realCards = Array.from(track.querySelectorAll('.c-card'));
+  const realVideos = realCards.map(c => c.querySelector('video'));
 
-  let activeIdx = -1;
+  // Prepend clones of all real cards (reversed so order stays correct when prepending)
+  [...realCards].reverse().forEach(card => {
+    const cl = card.cloneNode(true);
+    cl.classList.add('clone');
+    cl.querySelectorAll('video').forEach(v => v.removeAttribute('src'));
+    track.prepend(cl);
+  });
+  // Append clones of all real cards
+  realCards.forEach(card => {
+    const cl = card.cloneNode(true);
+    cl.classList.add('clone');
+    cl.querySelectorAll('video').forEach(v => v.removeAttribute('src'));
+    track.appendChild(cl);
+  });
+
+  const allCards = Array.from(track.querySelectorAll('.c-card'));
+  // Layout: [pre-clones 0..N-1] [real N..2N-1] [post-clones 2N..3N-1]
+
+  let activeAll  = N;   // index in allCards of current active card
+  let prevActive = -1;
+  let jumping    = false;
+
+  /* silently teleport scroll to card at idx (no animation) */
+  function jumpToCard(idx) {
+    jumping = true;
+    track.style.scrollSnapType = 'none';
+    const card       = allCards[idx];
+    const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+    track.scrollLeft = cardCenter - track.offsetWidth / 2;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        track.style.scrollSnapType = '';
+        jumping = false;
+        updateCarousel();
+      });
+    });
+  }
 
   function updateCarousel() {
     const cx = track.getBoundingClientRect().left + track.offsetWidth / 2;
+    let closestIdx = 0, minDist = Infinity;
 
-    let closestIdx = 0;
-    let minDist    = Infinity;
-
-    cards.forEach((card, i) => {
+    allCards.forEach((card, i) => {
       const r    = card.getBoundingClientRect();
       const dist = Math.abs((r.left + r.width / 2) - cx);
-
       if (dist < minDist) { minDist = dist; closestIdx = i; }
 
-      // smooth scale: 0.78 → 1.0 based on distance
       const step  = CARD_W + GAP;
       const ratio = Math.max(0, 1 - dist / step);
-      const s     = 0.78 + 0.22 * ratio;
-      const o     = 0.55 + 0.45 * ratio;
-
-      card.style.transform = `scale(${s})`;
-      card.style.opacity   = o;
+      card.style.transform = `scale(${0.84 + 0.16 * ratio})`;
+      card.style.opacity   = 0.55 + 0.45 * ratio;
       card.classList.remove('active');
     });
 
-    // snap the true centre card
-    cards[closestIdx].style.transform = 'scale(1)';
-    cards[closestIdx].style.opacity   = '1';
-    cards[closestIdx].classList.add('active');
+    allCards[closestIdx].style.transform = 'scale(1)';
+    allCards[closestIdx].style.opacity   = '1';
+    allCards[closestIdx].classList.add('active');
+    activeAll = closestIdx;
 
-    dots.forEach((d, i) => d.classList.toggle('active', i === closestIdx));
+    // Dots: map to real index 0..N-1
+    const realIdx = ((closestIdx - N) % N + N) % N;
+    dotsEl.forEach((d, i) => d.classList.toggle('active', i === realIdx));
 
-    // play/pause video previews — thumbnail stays until video actually plays
-    if (closestIdx !== activeIdx) {
-      // deactivate previous card
-      if (activeIdx >= 0) {
-        const prev = cards[activeIdx];
-        const prevV = videos[activeIdx];
-        prev.classList.remove('playing');
-        if (prevV) { prevV.pause(); prevV.currentTime = 0; }
+    // Video: only play real cards (indices N..2N-1)
+    if (closestIdx !== prevActive) {
+      if (prevActive >= N && prevActive < 2 * N) {
+        const pCard = realCards[prevActive - N];
+        const pVid  = realVideos[prevActive - N];
+        pCard.classList.remove('playing');
+        if (pVid) { pVid.pause(); pVid.currentTime = 0; }
       }
-
-      activeIdx = closestIdx;
-
-      const activeCard = cards[closestIdx];
-      const v = videos[closestIdx];
-      if (v) {
-        // remove any stale playing listener
-        v._onPlaying && v.removeEventListener('playing', v._onPlaying);
-        v._onPlaying = () => activeCard.classList.add('playing');
-        v.addEventListener('playing', v._onPlaying, { once: true });
-        v.play().catch(() => {});
+      prevActive = closestIdx;
+      if (closestIdx >= N && closestIdx < 2 * N) {
+        const rCard = realCards[closestIdx - N];
+        const v     = realVideos[closestIdx - N];
+        if (v) {
+          v._onPlaying && v.removeEventListener('playing', v._onPlaying);
+          v._onPlaying = () => rCard.classList.add('playing');
+          v.addEventListener('playing', v._onPlaying, { once: true });
+          v.play().catch(() => {});
+        }
       }
     }
   }
 
-  track.addEventListener('scroll',    updateCarousel, { passive: true });
-  track.addEventListener('scrollend', updateCarousel);
-
-  // initialise
-  requestAnimationFrame(() => {
-    updateCarousel();
+  /* On snap complete: if in clone zone, silently teleport to real equivalent */
+  track.addEventListener('scrollend', () => {
+    if (jumping) return;
+    if (activeAll < N)       jumpToCard(activeAll + N);
+    else if (activeAll >= 2 * N) jumpToCard(activeAll - N);
   });
 
-  // nav click
+  track.addEventListener('scroll', updateCarousel, { passive: true });
+
+  /* Init: jump to first real card */
+  requestAnimationFrame(() => {
+    jumpToCard(N);
+  });
+
+  /* Nav click */
   document.querySelectorAll('.nav-item').forEach(n => {
     n.addEventListener('click', () => {
       document.querySelectorAll('.nav-item').forEach(x => {
