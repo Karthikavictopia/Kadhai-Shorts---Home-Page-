@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Kadhai Shorts</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
+
+<style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -524,7 +525,7 @@
 
     .c-card {
       flex: 0 0 310px;
-      height: 400px;
+      height: clamp(280px, 47svh, 400px);
       scroll-snap-align: center;
       scroll-snap-stop: always;
       border-radius: 18px;
@@ -612,10 +613,11 @@
     /* ── scrollable body ── */
     .scroll-body {
       flex: 1;
+      min-height: 0;
       overflow-y: auto;
       overflow-x: hidden;
       scrollbar-width: none;
-      padding: 8px 0 24px;
+      padding: 8px 0 12px;
     }
     .scroll-body::-webkit-scrollbar { display: none; }
 
@@ -879,18 +881,13 @@
 
     /* ── bottom nav ── */
     .bottom-nav {
-      position: fixed;
-      bottom: 0; left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 430px;
+      flex-shrink: 0;
       background: #0f0f0f;
       border-top: 1px solid rgba(255,255,255,0.09);
       display: flex;
       justify-content: space-around;
       align-items: center;
       padding: 8px 30px;
-      z-index: 100;
       box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
     }
     .nav-item {
