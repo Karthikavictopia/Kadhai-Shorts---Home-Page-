@@ -357,7 +357,7 @@
     /* ══════ GO PREMIUM PILL ══════ */
     .premium-float {
       flex-shrink: 0;
-      margin: 0 20px 8px;
+      margin: 6px 20px 6px;
       height: 46px;
       background: linear-gradient(90deg, #F9D684 0%, #FBF1BF 55%, #F9D684 100%);
       border-radius: 50px;
@@ -992,6 +992,9 @@
     </div>
   </div>
 
+  <!-- Scrollable sections -->
+  <div class="scroll-body">
+
   <!-- ══════ CURATED CAROUSEL ══════ -->
   <div class="carousel-wrap">
     <div class="carousel-track" id="carousel">
@@ -1048,9 +1051,6 @@
     </div>
   </div>
   <!-- ══════ END CAROUSEL ══════ -->
-
-  <!-- Scrollable sections -->
-  <div class="scroll-body">
 
     <!-- Continue Watching -->
     <div class="section">
@@ -1359,7 +1359,7 @@
 
   </div><!-- /scroll-body -->
 
-  <!-- Go Premium Pill -->
+  <!-- Go Premium Pill — sticky above bottom nav -->
   <div class="premium-float" id="premium-float">
     <img src="assets/images/Kadhaishorts Logo.png" alt="K"/>
     <span>Go Premium</span>
@@ -1509,7 +1509,6 @@
   function cacheCardPositions() {
     cardCenters = allCards.map(c => c.offsetLeft + c.offsetWidth / 2);
   }
-  cacheCardPositions();
   window.addEventListener('resize', cacheCardPositions, { passive: true });
 
   /* silently teleport scroll to card at idx (no animation) */
@@ -1618,8 +1617,9 @@
     scrollTimer = setTimeout(handleScrollEnd, 200);
   }, { passive: true });
 
-  /* Init: jump to first real card */
+  /* Init: cache positions after layout is painted, then jump to first real card */
   requestAnimationFrame(() => {
+    cacheCardPositions();
     jumpToCard(N);
   });
 
