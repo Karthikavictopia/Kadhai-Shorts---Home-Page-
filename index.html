@@ -443,7 +443,7 @@
     .splash-fill {
       position: absolute; top: 0; left: 0;
       opacity: 0;
-      animation: splash-fill-in 0.4s ease 0.85s forwards;
+      animation: splash-fill-in 0.4s ease 3s forwards;
     }
     @keyframes splash-fill-in {
       to { opacity: 1; }
@@ -452,7 +452,7 @@
     .splash-stroke-path {
       stroke-dasharray: 100;
       stroke-dashoffset: 100;
-      animation: splash-draw 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      animation: splash-draw 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     }
     @keyframes splash-draw {
       to { stroke-dashoffset: 0; }
@@ -1329,7 +1329,7 @@
           <div class="s-thumb">
             <img src="assets/images/love-at-first-sight.png" alt="" loading="lazy"/>
             <div class="s-gradient"></div>
-            <div class="s-genre-tag">Romance</div>
+
             <div class="s-name">Love at First Sight</div>
           </div>
         </div>
@@ -1337,7 +1337,7 @@
           <div class="s-thumb">
             <img src="assets/images/rainy-rendezvous.png" alt="" loading="lazy"/>
             <div class="s-gradient"></div>
-            <div class="s-genre-tag">Romance</div>
+
             <div class="s-name">Rainy Rendezvous</div>
           </div>
         </div>
@@ -1345,7 +1345,7 @@
           <div class="s-thumb">
             <img src="assets/images/kitchen-kadhai.png" alt="" loading="lazy"/>
             <div class="s-gradient"></div>
-            <div class="s-genre-tag">Slice of Life</div>
+
             <div class="s-name">Kitchen Kadhai</div>
           </div>
         </div>
@@ -1353,7 +1353,7 @@
           <div class="s-thumb">
             <img src="assets/images/coastal-secrets.png" alt="" loading="lazy"/>
             <div class="s-gradient"></div>
-            <div class="s-genre-tag">Thriller</div>
+
             <div class="s-name">Coastal Secrets</div>
           </div>
         </div>
@@ -1929,7 +1929,7 @@
     splash.addEventListener('transitionend', () => {
       splash.style.display = 'none';
     }, { once: true });
-  }, 1600);
+  }, 4200);
 </script>
 </body>
 </html>
