@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="kGrad" x1="36" y1="28" x2="160" y2="172" gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="#F16623"/>
+      <stop offset="40%"  stop-color="#E71F2C"/>
+      <stop offset="100%" stop-color="#991C4A"/>
+    </linearGradient>
+  </defs>
+
+  <!-- App icon background -->
+  <rect width="200" height="200" rx="44" fill="#151515"/>
+
+  <!-- Left bar of K -->
+  <rect x="36" y="28" width="32" height="144" rx="10" fill="url(#kGrad)"/>
+
+  <!-- Upper arm of K (points to play-button tip) -->
+  <polygon points="70,28 70,94 160,100" fill="url(#kGrad)"/>
+
+  <!-- Lower arm of K / play-button triangle -->
+  <polygon points="70,106 70,172 160,100" fill="url(#kGrad)"/>
+</svg>
