@@ -15,7 +15,11 @@
       "Bash(mv \"/c/Claude Explore/Kadhaishorts/coastal-secrets.png\" \"/c/Claude Explore/Kadhaishorts/gift-icon.png\" \"/c/Claude Explore/Kadhaishorts/home-turf-hijinks.png\" \"/c/Claude Explore/Kadhaishorts/kitchen-kadhai.png\" \"/c/Claude Explore/Kadhaishorts/love-at-first-sight.png\" \"/c/Claude Explore/Kadhaishorts/Media \\(2\\).jpg\" \"/c/Claude Explore/Kadhaishorts/public-prank-party.png\" \"/c/Claude Explore/Kadhaishorts/rainy-rendezvous.png\" \"/c/Claude Explore/Kadhaishorts/super-subbus-challenge.png\" \"/c/Claude Explore/Kadhaishorts/wifi-woes-at-home.png\" \"/c/Claude Explore/Kadhaishorts/assets/images/\")",
       "mcp__claude_ai_Figma__get_design_context",
       "mcp__claude_ai_Figma__use_figma",
-      "mcp__claude_ai_Figma__get_screenshot"
+      "mcp__claude_ai_Figma__get_screenshot",
+      "mcp__claude_ai_Figma__get_metadata",
+      "Skill(update-config)",
+      "Bash(mv \"C:\\\\Claude Explore\\\\Kadhaishorts\\\\assets\\\\images\\\\Media \\(3\\).jpg\" \"C:\\\\Claude Explore\\\\Kadhaishorts\\\\assets\\\\images\\\\chai-shorts-search-explore.jpg\")",
+      "Bash(mv \"C:\\\\Claude Explore\\\\Kadhaishorts\\\\assets\\\\images\\\\Media \\(4\\).jpg\" \"C:\\\\Claude Explore\\\\Kadhaishorts\\\\assets\\\\images\\\\chai-shorts-search-results.jpg\")"
     ]
   }
 }
