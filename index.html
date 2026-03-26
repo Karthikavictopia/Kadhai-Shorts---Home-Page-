@@ -357,27 +357,29 @@
     /* ══════ GO PREMIUM PILL ══════ */
     .premium-float {
       flex-shrink: 0;
-      margin: 6px 20px 6px;
+      margin: 6px auto 6px;
       height: 46px;
-      background: linear-gradient(90deg, #F9D684 0%, #FBF1BF 55%, #F9D684 100%);
+      padding: 0 22px 0 16px;
+      width: fit-content;
+      background: transparent;
       border-radius: 50px;
       display: flex;
       align-items: center;
-      justify-content: center;
       gap: 10px;
       cursor: pointer;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.35), 0 0 0 1px rgba(249,214,132,0.25);
+      box-shadow: 0 0 18px rgba(255, 215, 0, 0.55), 0 2px 8px rgba(0,0,0,0.4), 0 0 0 1.5px rgba(255,215,0,0.55);
     }
     .premium-float img {
-      width: 28px; height: 28px;
+      width: 26px; height: 26px;
       border-radius: 7px;
-      filter: sepia(1) saturate(4) hue-rotate(-10deg) brightness(1.15);
+      filter: sepia(1) saturate(5) hue-rotate(-5deg) brightness(1.3);
       flex-shrink: 0;
     }
     .premium-float span {
-      font-size: 15px; font-weight: 600;
-      color: #4A2800;
-      letter-spacing: 0.2px;
+      font-size: 15px; font-weight: 700;
+      color: #FFD700;
+      letter-spacing: 0.3px;
+      text-shadow: 0 0 8px rgba(255,215,0,0.6);
     }
 
     /* free badge on cards */
