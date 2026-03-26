@@ -309,6 +309,38 @@
       line-height: 1.3;
       z-index: 3;
     }
+    /* ── free episodes badge ── */
+    .c-badge {
+      position: absolute;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #F16623 0%, #E71F2C 30%, #991C4A 100%);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 5px 14px;
+      border-radius: 10px;
+      z-index: 5;
+      white-space: nowrap;
+      letter-spacing: 0.2px;
+    }
+    /* smaller variant for section cards */
+    .s-thumb .s-badge {
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #F16623 0%, #E71F2C 30%, #991C4A 100%);
+      color: #ffffff;
+      font-size: 9px;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 8px;
+      z-index: 4;
+      white-space: nowrap;
+    }
+
     /* ── continue watching extras ── */
     .cw-play {
       position: absolute;
@@ -479,12 +511,18 @@
       cursor: pointer;
       flex: 1;
     }
+    .nav-item { color: var(--grey); }
+    .nav-item.active { color: var(--primary); }
     .nav-label {
       font-size: 16px;
       font-weight: 400;
-      color: var(--grey);
+      color: inherit;
     }
-    .nav-item.active .nav-label { color: var(--primary); }
+    /* icon state switching */
+    .nav-item .ic-solid  { display: none; }
+    .nav-item .ic-outline { display: inline; }
+    .nav-item.active .ic-solid  { display: inline; }
+    .nav-item.active .ic-outline { display: none; }
   </style>
 </head>
 <body>
@@ -542,6 +580,7 @@
       <div class="c-card" data-index="0">
         <img src="assets/images/home-turf-hijinks.png" alt="Home Turf Hijinks"/>
         <video src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" muted loop playsinline></video>
+        <div class="c-badge">5 Free Episodes</div>
         <div class="c-name">Home Turf Hijinks</div>
       </div>
 
@@ -549,6 +588,7 @@
       <div class="c-card" data-index="1">
         <img src="assets/images/coastal-secrets.png" alt="Night Secret"/>
         <video src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4" muted loop playsinline></video>
+        <div class="c-badge">7 Free Episodes</div>
         <div class="c-name">Night Secret</div>
       </div>
 
@@ -556,6 +596,7 @@
       <div class="c-card" data-index="2">
         <img src="assets/images/love-at-first-sight.png" alt="Love at First Sight"/>
         <video src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4" muted loop playsinline></video>
+        <div class="c-badge">6 Free Episodes</div>
         <div class="c-name">Love at First Sight</div>
       </div>
 
@@ -563,6 +604,7 @@
       <div class="c-card" data-index="3">
         <img src="assets/images/wifi-woes-at-home.png" alt="Wi-Fi Woes at Home"/>
         <video src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4" muted loop playsinline></video>
+        <div class="c-badge">3 Free Episodes</div>
         <div class="c-name">Wi-Fi Woes at Home</div>
       </div>
 
@@ -570,6 +612,7 @@
       <div class="c-card" data-index="4">
         <img src="assets/images/super-subbus-challenge.png" alt="Super Subbu's Challenge"/>
         <video src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4" muted loop playsinline></video>
+        <div class="c-badge">4 Free Episodes</div>
         <div class="c-name">Super Subbu's Challenge</div>
       </div>
 
@@ -599,6 +642,7 @@
           <div class="s-thumb">
             <img src="assets/images/home-turf-hijinks.png" alt=""/>
             <div class="s-gradient"></div>
+            <div class="s-badge">5 Free</div>
             <div class="cw-play"><svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
             <div class="cw-ep">Ep 1 · 12 min left</div>
             <div class="cw-progress"><div class="cw-bar" style="width:62%"></div></div>
@@ -608,6 +652,7 @@
           <div class="s-thumb">
             <img src="assets/images/super-subbus-challenge.png" alt=""/>
             <div class="s-gradient"></div>
+            <div class="s-badge">4 Free</div>
             <div class="cw-play"><svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
             <div class="cw-ep">Ep 1 · 8 min left</div>
             <div class="cw-progress"><div class="cw-bar" style="width:30%"></div></div>
@@ -617,6 +662,7 @@
           <div class="s-thumb">
             <img src="assets/images/love-at-first-sight.png" alt=""/>
             <div class="s-gradient"></div>
+            <div class="s-badge">6 Free</div>
             <div class="cw-play"><svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
             <div class="cw-ep">Ep 2 · 5 min left</div>
             <div class="cw-progress"><div class="cw-bar" style="width:80%"></div></div>
@@ -626,6 +672,7 @@
           <div class="s-thumb">
             <img src="assets/images/coastal-secrets.png" alt=""/>
             <div class="s-gradient"></div>
+            <div class="s-badge">7 Free</div>
             <div class="cw-play"><svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
             <div class="cw-ep">Ep 3 · 15 min left</div>
             <div class="cw-progress"><div class="cw-bar" style="width:45%"></div></div>
@@ -766,36 +813,69 @@
 
   <!-- Bottom Nav -->
   <div class="bottom-nav">
+
     <!-- Home -->
     <div class="nav-item active">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="#CF2E4E">
-        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+      <svg width="24" height="24" viewBox="0 0 24 24">
+        <!-- solid (active) -->
+        <path class="ic-solid" fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <!-- outline (inactive) -->
+        <path class="ic-outline" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V9.5z"/>
       </svg>
-      <span class="nav-label" style="color:#CF2E4E;">Home</span>
+      <span class="nav-label">Home</span>
     </div>
-    <!-- Explore -->
+
+    <!-- Explore — Reels icon (matches Figma) -->
     <div class="nav-item">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5c5c5c" stroke-width="1.8" stroke-linecap="round">
-        <rect x="2" y="7" width="15" height="11" rx="2"/>
-        <path d="M17 9l4-2v10l-4-2"/>
+      <svg width="24" height="24" viewBox="0 0 24 24">
+        <!-- solid reels (active) -->
+        <g class="ic-solid">
+          <rect x="3" y="3" width="18" height="18" rx="2.5" fill="currentColor"/>
+          <line x1="3" y1="9" x2="21" y2="9" stroke="white" stroke-width="1.4"/>
+          <line x1="9" y1="3" x2="9" y2="9" stroke="white" stroke-width="1.4"/>
+          <line x1="15" y1="3" x2="15" y2="9" stroke="white" stroke-width="1.4"/>
+          <polygon points="10.5,13 10.5,17.5 15.5,15.25" fill="white"/>
+        </g>
+        <!-- outline reels (inactive) -->
+        <g class="ic-outline">
+          <rect x="3" y="3" width="18" height="18" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <line x1="3" y1="9" x2="21" y2="9" stroke="currentColor" stroke-width="1.4"/>
+          <line x1="9" y1="3" x2="9" y2="9" stroke="currentColor" stroke-width="1.4"/>
+          <line x1="15" y1="3" x2="15" y2="9" stroke="currentColor" stroke-width="1.4"/>
+          <polygon points="10.5,13 10.5,17.5 15.5,15.25" fill="currentColor"/>
+        </g>
       </svg>
       <span class="nav-label">Explore</span>
     </div>
+
     <!-- My List -->
     <div class="nav-item">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5c5c5c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/>
+      <svg width="24" height="24" viewBox="0 0 24 24">
+        <!-- solid bookmark (active) -->
+        <path class="ic-solid" fill="currentColor" d="M17 3H7a2 2 0 00-2 2v16l7-3 7 3V5a2 2 0 00-2-2z"/>
+        <!-- outline bookmark (inactive) -->
+        <path class="ic-outline" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/>
       </svg>
       <span class="nav-label">My List</span>
     </div>
+
     <!-- Profile -->
     <div class="nav-item">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5c5c5c" stroke-width="1.8" stroke-linecap="round">
-        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
-        <circle cx="12" cy="7" r="4"/>
+      <svg width="24" height="24" viewBox="0 0 24 24">
+        <!-- solid person (active) -->
+        <g class="ic-solid" fill="currentColor">
+          <circle cx="12" cy="7" r="4.5"/>
+          <path d="M4 21a8 8 0 0116 0H4z"/>
+        </g>
+        <!-- outline person (inactive) -->
+        <g class="ic-outline" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <circle cx="12" cy="7" r="4"/>
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+        </g>
       </svg>
       <span class="nav-label">Profile</span>
     </div>
+
   </div>
 
 </div><!-- /phone -->
@@ -913,13 +993,8 @@
   /* Nav click */
   document.querySelectorAll('.nav-item').forEach(n => {
     n.addEventListener('click', () => {
-      document.querySelectorAll('.nav-item').forEach(x => {
-        x.classList.remove('active');
-        x.querySelector('.nav-label').style.color = '';
-      });
+      document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
       n.classList.add('active');
-      n.querySelector('.nav-label').style.color = '#CF2E4E';
-      n.querySelector('svg').style.stroke = '#CF2E4E';
     });
   });
 </script>
