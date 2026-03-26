@@ -25,6 +25,9 @@
       font-family: 'Roboto', sans-serif;
       color: var(--white);
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
     }
 
     /* ── phone shell ── */
@@ -65,19 +68,298 @@
     .search-box {
       flex: 1;
       background: #2a2a2a;
+      border: 1px solid rgba(255,255,255,0.07);
       border-radius: 10px;
       display: flex;
       align-items: center;
       gap: 8px;
       padding: 9px 12px;
+      transition: border-color 0.2s ease;
+    }
+    .search-box:focus-within {
+      border-color: rgba(207,46,78,0.4);
     }
     .search-box span { color: var(--grey-text); font-size: 13px; }
+    .search-box { cursor: pointer; }
     .top-icons { display: flex; gap: 12px; align-items: center; }
+
+    /* ═══════════════════════════════════
+       SEARCH OVERLAY
+    ════════════════════════════════════ */
+    .search-overlay {
+      position: absolute;
+      inset: 0;
+      background: var(--bg);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      transform: translateY(100%);
+      transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .search-overlay.open { transform: translateY(0); }
+
+    /* header row */
+    .search-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px 8px;
+      flex-shrink: 0;
+    }
+    .search-back {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; cursor: pointer;
+      color: var(--white);
+      border-radius: 50%;
+      transition: background 0.15s;
+    }
+    .search-back:active { background: rgba(255,255,255,0.08); }
+    .search-input-wrap {
+      flex: 1;
+      background: #2a2a2a;
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 6px;
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 12px;
+      transition: border-color 0.2s ease;
+    }
+    .search-input-wrap:focus-within { border-color: rgba(207,46,78,0.7); }
+    .search-input {
+      flex: 1;
+      background: none; border: none; outline: none;
+      color: var(--white);
+      font-family: 'Roboto', sans-serif;
+      font-size: 14px;
+    }
+    .search-input::placeholder { color: var(--grey-text); }
+    .search-clear {
+      width: 16px; height: 16px;
+      display: none; align-items: center; justify-content: center;
+      cursor: pointer; opacity: 0.5;
+      flex-shrink: 0;
+    }
+    .search-clear.visible { display: flex; }
+
+    /* genre chips — smooth slide-in after search */
+    .genre-filter {
+      display: flex; gap: 8px;
+      padding: 0 16px;
+      overflow-x: auto; flex-shrink: 0;
+      scrollbar-width: none;
+      max-height: 0; opacity: 0;
+      pointer-events: none;
+      transition: max-height 0.28s ease, opacity 0.2s ease, padding 0.28s ease;
+    }
+    .genre-filter.visible {
+      max-height: 54px; opacity: 1;
+      pointer-events: auto;
+      padding: 4px 16px 12px;
+    }
+    .genre-filter::-webkit-scrollbar { display: none; }
+    .genre-chip {
+      flex-shrink: 0;
+      height: 30px; padding: 0 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: transparent;
+      color: var(--grey-text);
+      font-family: 'Roboto', sans-serif;
+      font-size: 14px; font-weight: 400;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 4px;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+    .genre-chip.active {
+      background: var(--brand-gradient);
+      border-color: transparent;
+      color: #fff;
+    }
+    .genre-chip.active .gc-check { display: inline; }
+    .gc-check { display: none; font-size: 11px; }
+
+    /* results container */
+    .search-results {
+      flex: 1; overflow-y: auto;
+      padding: 0;
+      scrollbar-width: none;
+    }
+    .search-results::-webkit-scrollbar { display: none; }
+
+    /* default state sections */
+    .sr-section { padding: 20px 0 0; }
+    .sr-section-header {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px; padding: 0 20px;
+    }
+    .sr-section-title {
+      font-size: 20px; font-weight: 600;
+      color: var(--white);
+    }
+
+    /* 2-col grid — recommendations */
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      padding: 8px 16px 24px;
+    }
+
+    /* 3-col grid — active search results */
+    .search-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 8px 16px 24px;
+      animation: sr-fade-in 0.2s ease;
+    }
+
+    /* "Results for X" label */
+    .results-label {
+      font-size: 20px; font-weight: 600;
+      color: var(--white);
+      padding: 12px 16px 4px;
+    }
+    .results-count {
+      font-size: 14px; font-weight: 400;
+      color: var(--grey-text);
+      padding: 2px 16px 0;
+    }
+
+    /* search result card — 3-col grid, matches s-card visual style */
+    .sr-thumb-card {
+      position: relative;
+      aspect-ratio: 150 / 212;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #1a1a1a;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .sr-thumb-card:active { transform: scale(0.94); }
+    .sr-thumb-card img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+    }
+    .sr-thumb-card .sr-tc-gradient {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, transparent 55%);
+    }
+    .sr-thumb-card .sr-tc-name {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 24px 6px 7px;
+      font-size: 12px; font-weight: 600;
+      color: #fff; line-height: 1.3;
+      z-index: 3;
+    }
+    .result-card {
+      cursor: pointer;
+      border-radius: 10px; overflow: hidden;
+      position: relative;
+      aspect-ratio: 150 / 212;
+      background: #1a1a1a;
+      transition: transform 0.15s ease;
+    }
+    .result-card:active { transform: scale(0.96); }
+    .result-card img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+    }
+    .result-card-scrim {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 55%);
+    }
+    .result-card-genre {
+      position: absolute; top: 8px; left: 8px;
+      background: rgba(20,20,20,0.78);
+      backdrop-filter: blur(4px);
+      color: var(--primary-light);
+      font-size: 10px; font-weight: 500;
+      padding: 3px 7px; border-radius: 6px;
+      letter-spacing: 0.2px;
+    }
+    .result-card-name {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 28px 8px 9px;
+      font-size: 13px; font-weight: 600;
+      color: #fff; line-height: 1.25;
+    }
+
+    /* highlight matched text */
+    mark.sr-match {
+      background: none;
+      color: #FF6B81;
+      font-weight: 700;
+    }
+
+    /* recent searches */
+    .sr-recent-wrap {
+      display: flex; flex-direction: column;
+      gap: 2px; padding: 0 16px;
+    }
+    .sr-recent-chip {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      cursor: pointer;
+      color: var(--white);
+      font-size: 14px; font-weight: 400;
+    }
+    .sr-recent-chip svg { flex-shrink: 0; opacity: 0.4; }
+    .sr-recent-chip span { flex: 1; }
+    .sr-recent-remove {
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0.35; flex-shrink: 0;
+      border-radius: 50%;
+      transition: opacity 0.15s;
+    }
+    .sr-recent-remove:active { opacity: 0.8; }
+    .sr-clear-all {
+      font-size: 14px; font-weight: 400;
+      color: #FF6B81; cursor: pointer;
+    }
+
+    /* empty state */
+    .search-empty {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 14px; padding: 56px 28px;
+      text-align: center;
+    }
+    .search-empty-icon {
+      width: 64px; height: 64px;
+      border-radius: 16px;
+      background: rgba(207,46,78,0.1);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .search-empty-icon svg { opacity: 0.5; }
+    .search-empty-title {
+      font-size: 16px; font-weight: 600;
+      color: var(--white);
+    }
+    .search-empty-sub {
+      font-size: 14px; font-weight: 400;
+      color: var(--grey-text); line-height: 1.5;
+    }
+    .search-empty-sub strong { color: #FF6B81; font-weight: 500; }
+
+    /* grid fade-in */
+    @keyframes sr-fade-in {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
     .icon-btn {
       width: 36px; height: 36px;
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
+      transition: opacity 0.15s ease;
     }
+    .icon-btn:active { opacity: 0.6; }
     .gif-btn {
       background: #1e1e1e;
       border-radius: 8px;
@@ -132,6 +414,7 @@
       padding-bottom: 12px;
       padding-left: calc(50% - 155px);
       padding-right: calc(50% - 155px);
+      overscroll-behavior-x: contain;
     }
     .carousel-track::-webkit-scrollbar { display: none; }
 
@@ -145,9 +428,7 @@
       position: relative;
       transform: scale(0.84);
       transform-origin: center center;
-      transition: transform 0.3s cubic-bezier(.25,.46,.45,.94),
-                  box-shadow 0.3s ease,
-                  opacity 0.3s ease;
+      transition: box-shadow 0.3s ease;
       will-change: transform, opacity;
       opacity: 0.55;
       cursor: pointer;
@@ -194,13 +475,14 @@
     .c-card .c-name {
       position: absolute;
       bottom: 0; left: 0; right: 0;
-      padding: 36px 12px 12px;
-      background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 100%);
+      padding: 48px 14px 14px;
+      background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.2) 60%, transparent 100%);
       font-size: 15px;
       font-weight: 700;
       color: #fff;
       line-height: 1.2;
-      z-index: 2;
+      z-index: 4;
+      letter-spacing: 0.1px;
     }
 
     /* ── dots ── */
@@ -215,11 +497,11 @@
       width: 5px; height: 5px;
       border-radius: 50%;
       background: var(--grey);
-      transition: background 0.3s, width 0.3s;
+      transition: background 0.3s, width 0.3s, height 0.3s;
     }
     .dot.active {
       background: var(--primary);
-      width: 20px;
+      width: 20px; height: 6px;
       border-radius: 3px;
     }
 
@@ -261,7 +543,9 @@
     .s-card {
       flex: 0 0 150px;
       cursor: pointer;
+      transition: transform 0.15s ease;
     }
+    .s-card:active { transform: scale(0.96); }
     .s-thumb {
       width: 150px;
       height: 212px;
@@ -356,8 +640,8 @@
     .cw-progress {
       position: absolute;
       bottom: 0; left: 0; right: 0;
-      height: 3px;
-      background: rgba(255,255,255,0.18);
+      height: 4px;
+      background: rgba(255,255,255,0.25);
       z-index: 4;
     }
     .cw-bar {
@@ -369,8 +653,8 @@
     .cw-ep {
       position: absolute;
       bottom: 8px; left: 8px;
-      background: rgba(15,15,15,0.72);
-      color: var(--grey-text);
+      background: rgba(15,15,15,0.75);
+      color: var(--primary-light);
       font-size: 9px;
       font-weight: 500;
       padding: 2px 6px;
@@ -378,7 +662,7 @@
       z-index: 4;
     }
 
-    /* trending rank number */
+    /* trending rank number — outlined grid style */
     .s-thumb .tr-rank {
       position: absolute;
       bottom: 4px; left: 6px;
@@ -387,11 +671,11 @@
       line-height: 1;
       z-index: 3;
       letter-spacing: -3px;
-      background: linear-gradient(135deg, #F16623 0%, #E71F2C 40%, #991C4A 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.9));
+      color: transparent;
+      -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.5);
+      -webkit-text-fill-color: rgba(255, 255, 255, 0.07);
+      paint-order: stroke fill;
+      filter: drop-shadow(0 1px 4px rgba(0,0,0,0.8));
     }
     /* trending fire badge */
     .s-thumb .tr-badge {
@@ -402,7 +686,7 @@
       font-size: 9px;
       font-weight: 600;
       padding: 3px 7px;
-      border-radius: 5px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       gap: 3px;
@@ -425,7 +709,9 @@
     .cs-card {
       flex: 0 0 150px;
       cursor: pointer;
+      transition: transform 0.15s ease;
     }
+    .cs-card:active { transform: scale(0.96); }
     .cs-thumb {
       width: 150px;
       height: 212px;
@@ -448,11 +734,11 @@
       top: 8px; left: 8px;
       background: rgba(15,15,15,0.72);
       border: 1px solid rgba(255,255,255,0.18);
-      color: var(--grey-text);
+      color: #fff;
       font-size: 9px;
       font-weight: 500;
       padding: 3px 7px;
-      border-radius: 5px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       gap: 3px;
@@ -495,7 +781,7 @@
       width: 100%;
       max-width: 430px;
       background: #0f0f0f;
-      border-top: 1px solid rgba(255,255,255,0.06);
+      border-top: 1px solid rgba(255,255,255,0.09);
       display: flex;
       justify-content: space-around;
       align-items: center;
@@ -640,7 +926,7 @@
       <div class="row-scroll">
         <div class="s-card">
           <div class="s-thumb">
-            <img src="assets/images/home-turf-hijinks.png" alt=""/>
+            <img src="assets/images/home-turf-hijinks.png" alt="" loading="lazy"/>
             <div class="s-gradient"></div>
             <div class="s-badge">5 Free</div>
             <div class="cw-play"><svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
@@ -650,7 +936,7 @@
         </div>
         <div class="s-card">
           <div class="s-thumb">
-            <img src="assets/images/super-subbus-challenge.png" alt=""/>
+            <img src="assets/images/super-subbus-challenge.png" alt="" loading="lazy"/>
             <div class="s-gradient"></div>
             <div class="s-badge">4 Free</div>
             <div class="cw-play"><svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
@@ -660,7 +946,7 @@
         </div>
         <div class="s-card">
           <div class="s-thumb">
-            <img src="assets/images/love-at-first-sight.png" alt=""/>
+            <img src="assets/images/love-at-first-sight.png" alt="" loading="lazy"/>
             <div class="s-gradient"></div>
             <div class="s-badge">6 Free</div>
             <div class="cw-play"><svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
@@ -670,7 +956,7 @@
         </div>
         <div class="s-card">
           <div class="s-thumb">
-            <img src="assets/images/coastal-secrets.png" alt=""/>
+            <img src="assets/images/coastal-secrets.png" alt="" loading="lazy"/>
             <div class="s-gradient"></div>
             <div class="s-badge">7 Free</div>
             <div class="cw-play"><svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
@@ -692,7 +978,7 @@
       <div class="row-scroll">
         <div class="s-card">
           <div class="s-thumb">
-            <img src="assets/images/wifi-woes-at-home.png" alt=""/>
+            <img src="assets/images/wifi-woes-at-home.png" alt="" loading="lazy"/>
             <div class="s-gradient"></div>
             <div class="tr-badge">
               <svg width="9" height="9" viewBox="0 0 24 24" fill="white"><path d="M13.5 0.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67z"/></svg>
@@ -703,7 +989,7 @@
         </div>
         <div class="s-card">
           <div class="s-thumb">
-            <img src="assets/images/coastal-secrets.png" alt=""/>
+            <img src="assets/images/coastal-secrets.png" alt="" loading="lazy"/>
             <div class="s-gradient"></div>
             <div class="tr-badge">
               <svg width="9" height="9" viewBox="0 0 24 24" fill="white"><path d="M13.5 0.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67z"/></svg>
@@ -714,7 +1000,7 @@
         </div>
         <div class="s-card">
           <div class="s-thumb">
-            <img src="assets/images/public-prank-party.png" alt=""/>
+            <img src="assets/images/public-prank-party.png" alt="" loading="lazy"/>
             <div class="s-gradient"></div>
             <div class="tr-badge">
               <svg width="9" height="9" viewBox="0 0 24 24" fill="white"><path d="M13.5 0.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67z"/></svg>
@@ -725,7 +1011,7 @@
         </div>
         <div class="s-card">
           <div class="s-thumb">
-            <img src="assets/images/rainy-rendezvous.png" alt=""/>
+            <img src="assets/images/rainy-rendezvous.png" alt="" loading="lazy"/>
             <div class="s-gradient"></div>
             <div class="tr-badge">
               <svg width="9" height="9" viewBox="0 0 24 24" fill="white"><path d="M13.5 0.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67z"/></svg>
@@ -748,10 +1034,10 @@
       <div class="row-scroll">
         <div class="cs-card">
           <div class="cs-thumb">
-            <img src="assets/images/rainy-rendezvous.png" alt=""/>
+            <img src="assets/images/rainy-rendezvous.png" alt="" loading="lazy"/>
             <div class="cs-overlay"></div>
             <div class="cs-badge">
-              <svg width="8" height="8" viewBox="0 0 24 24" fill="#929596"><path d="M12 2a10 10 0 110 20A10 10 0 0112 2zm1 5h-2v6l5 3 1-1.73-4-2.27V7z"/></svg>
+              <svg width="8" height="8" viewBox="0 0 24 24" fill="#FF6B81"><path d="M12 2a10 10 0 110 20A10 10 0 0112 2zm1 5h-2v6l5 3 1-1.73-4-2.27V7z"/></svg>
               Apr 2026
             </div>
             <div class="cs-name">Rainy Rendezvous</div>
@@ -763,10 +1049,10 @@
         </div>
         <div class="cs-card">
           <div class="cs-thumb">
-            <img src="assets/images/kitchen-kadhai.png" alt=""/>
+            <img src="assets/images/kitchen-kadhai.png" alt="" loading="lazy"/>
             <div class="cs-overlay"></div>
             <div class="cs-badge">
-              <svg width="8" height="8" viewBox="0 0 24 24" fill="#929596"><path d="M12 2a10 10 0 110 20A10 10 0 0112 2zm1 5h-2v6l5 3 1-1.73-4-2.27V7z"/></svg>
+              <svg width="8" height="8" viewBox="0 0 24 24" fill="#FF6B81"><path d="M12 2a10 10 0 110 20A10 10 0 0112 2zm1 5h-2v6l5 3 1-1.73-4-2.27V7z"/></svg>
               May 2026
             </div>
             <div class="cs-name">Kitchen Kadhai</div>
@@ -778,10 +1064,10 @@
         </div>
         <div class="cs-card">
           <div class="cs-thumb">
-            <img src="assets/images/coastal-secrets.png" alt=""/>
+            <img src="assets/images/coastal-secrets.png" alt="" loading="lazy"/>
             <div class="cs-overlay"></div>
             <div class="cs-badge">
-              <svg width="8" height="8" viewBox="0 0 24 24" fill="#929596"><path d="M12 2a10 10 0 110 20A10 10 0 0112 2zm1 5h-2v6l5 3 1-1.73-4-2.27V7z"/></svg>
+              <svg width="8" height="8" viewBox="0 0 24 24" fill="#FF6B81"><path d="M12 2a10 10 0 110 20A10 10 0 0112 2zm1 5h-2v6l5 3 1-1.73-4-2.27V7z"/></svg>
               May 2026
             </div>
             <div class="cs-name">Locked Room</div>
@@ -793,10 +1079,10 @@
         </div>
         <div class="cs-card">
           <div class="cs-thumb">
-            <img src="assets/images/super-subbus-challenge.png" alt=""/>
+            <img src="assets/images/super-subbus-challenge.png" alt="" loading="lazy"/>
             <div class="cs-overlay"></div>
             <div class="cs-badge">
-              <svg width="8" height="8" viewBox="0 0 24 24" fill="#929596"><path d="M12 2a10 10 0 110 20A10 10 0 0112 2zm1 5h-2v6l5 3 1-1.73-4-2.27V7z"/></svg>
+              <svg width="8" height="8" viewBox="0 0 24 24" fill="#FF6B81"><path d="M12 2a10 10 0 110 20A10 10 0 0112 2zm1 5h-2v6l5 3 1-1.73-4-2.27V7z"/></svg>
               Jun 2026
             </div>
             <div class="cs-name">Village Tales</div>
@@ -878,6 +1164,43 @@
 
   </div>
 
+  <!-- ══════ SEARCH OVERLAY ══════ -->
+  <div class="search-overlay" id="search-overlay">
+
+    <!-- Header: back + input -->
+    <div class="search-header">
+      <div class="search-back" id="search-back">
+        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+      </div>
+      <div class="search-input-wrap">
+        <svg width="16" height="16" fill="none" stroke="#929596" stroke-width="2.2" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/>
+        </svg>
+        <input class="search-input" id="search-input" type="text" placeholder="Search stories…" autocomplete="off" autocorrect="off" spellcheck="false"/>
+        <div class="search-clear" id="search-clear">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" viewBox="0 0 24 24">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Genre filter chips -->
+    <div class="genre-filter">
+      <div class="genre-chip active" data-genre="All"><span class="gc-check">✓</span>All</div>
+      <div class="genre-chip" data-genre="Thriller"><span class="gc-check">✓</span>Thriller</div>
+      <div class="genre-chip" data-genre="Romance"><span class="gc-check">✓</span>Romance</div>
+      <div class="genre-chip" data-genre="Comedy"><span class="gc-check">✓</span>Comedy</div>
+      <div class="genre-chip" data-genre="Slice of Life"><span class="gc-check">✓</span>Slice of Life</div>
+    </div>
+
+    <!-- Results -->
+    <div class="search-results" id="search-results"></div>
+
+  </div><!-- /search-overlay -->
+
 </div><!-- /phone -->
 
 <script>
@@ -913,35 +1236,45 @@
   let prevActive = -1;
   let jumping    = false;
 
+  /* Cache card center positions in scroll-content space — avoids getBoundingClientRect reflow */
+  let cardCenters = [];
+  function cacheCardPositions() {
+    cardCenters = allCards.map(c => c.offsetLeft + c.offsetWidth / 2);
+  }
+  cacheCardPositions();
+  window.addEventListener('resize', cacheCardPositions, { passive: true });
+
   /* silently teleport scroll to card at idx (no animation) */
   function jumpToCard(idx) {
     jumping = true;
     track.style.scrollSnapType = 'none';
-    const card       = allCards[idx];
-    const cardCenter = card.offsetLeft + card.offsetWidth / 2;
-    track.scrollLeft = cardCenter - track.offsetWidth / 2;
+    track.scrollLeft = cardCenters[idx] - track.offsetWidth / 2;
+    updateCarousel(); // update scales immediately — no stale frame
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        track.style.scrollSnapType = '';
-        jumping = false;
-        updateCarousel();
+        requestAnimationFrame(() => {
+          track.style.scrollSnapType = '';
+          jumping = false;
+          updateCarousel();
+        });
       });
     });
   }
 
   function updateCarousel() {
-    const cx = track.getBoundingClientRect().left + track.offsetWidth / 2;
+    /* Use scroll-space positions — no layout reflow, accurate during scroll */
+    const trackCx = track.scrollLeft + track.offsetWidth / 2;
     let closestIdx = 0, minDist = Infinity;
 
     allCards.forEach((card, i) => {
-      const r    = card.getBoundingClientRect();
-      const dist = Math.abs((r.left + r.width / 2) - cx);
+      const dist = Math.abs(cardCenters[i] - trackCx);
       if (dist < minDist) { minDist = dist; closestIdx = i; }
 
-      const step  = CARD_W + GAP;
-      const ratio = Math.max(0, 1 - dist / step);
+      const step = CARD_W + GAP;
+      const t    = Math.max(0, 1 - dist / step);
+      const ratio = t * (2 - t);          // ease-out quad: fast rise → smooth settle
       card.style.transform = `scale(${0.84 + 0.16 * ratio})`;
-      card.style.opacity   = 0.55 + 0.45 * ratio;
+      card.style.opacity   = String(0.55 + 0.45 * ratio);
       card.classList.remove('active');
     });
 
@@ -960,7 +1293,12 @@
         const pCard = realCards[prevActive - N];
         const pVid  = realVideos[prevActive - N];
         pCard.classList.remove('playing');
-        if (pVid) { pVid.pause(); pVid.currentTime = 0; }
+        if (pVid) {
+          clearTimeout(pVid._playTimer);   // cancel pending play if user scrolled away
+          pVid._playTimer = null;
+          pVid.pause();
+          pVid.currentTime = 0;
+        }
       }
       prevActive = closestIdx;
       if (closestIdx >= N && closestIdx < 2 * N) {
@@ -968,22 +1306,49 @@
         const v     = realVideos[closestIdx - N];
         if (v) {
           v._onPlaying && v.removeEventListener('playing', v._onPlaying);
-          v._onPlaying = () => rCard.classList.add('playing');
-          v.addEventListener('playing', v._onPlaying, { once: true });
-          v.play().catch(() => {});
+          /* Show thumbnail for 2.5s before starting preview */
+          v._playTimer = setTimeout(() => {
+            v._playTimer = null;
+            v._onPlaying = () => rCard.classList.add('playing');
+            v.addEventListener('playing', v._onPlaying, { once: true });
+            v.play().catch(() => {});
+          }, 2500);
         }
       }
     }
   }
 
   /* On snap complete: if in clone zone, silently teleport to real equivalent */
-  track.addEventListener('scrollend', () => {
+  let scrollTimer = null;
+  function handleScrollEnd() {
+    clearTimeout(scrollTimer);
+    scrollTimer = null;
     if (jumping) return;
+    updateCarousel();
     if (activeAll < N)       jumpToCard(activeAll + N);
     else if (activeAll >= 2 * N) jumpToCard(activeAll - N);
+  }
+
+  track.addEventListener('scrollend', () => {
+    clearTimeout(scrollTimer);
+    scrollTimer = null;
+    handleScrollEnd();
   });
 
-  track.addEventListener('scroll', updateCarousel, { passive: true });
+  let rafPending = false;
+  track.addEventListener('scroll', () => {
+    /* rAF throttle — only one update per frame */
+    if (!rafPending) {
+      rafPending = true;
+      requestAnimationFrame(() => {
+        updateCarousel();
+        rafPending = false;
+      });
+    }
+    /* scrollend polyfill for Safari/iOS */
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(handleScrollEnd, 200);
+  }, { passive: true });
 
   /* Init: jump to first real card */
   requestAnimationFrame(() => {
@@ -997,6 +1362,289 @@
       n.classList.add('active');
     });
   });
+
+  /* ══════════════════════════════════
+     SEARCH
+  ══════════════════════════════════ */
+  const SERIES = [
+    { title: 'Home Turf Hijinks',         image: 'assets/images/home-turf-hijinks.png',       genre: 'Comedy'        },
+    { title: 'Coastal Secrets',           image: 'assets/images/coastal-secrets.png',         genre: 'Thriller'      },
+    { title: 'Love at First Sight',       image: 'assets/images/love-at-first-sight.png',     genre: 'Romance'       },
+    { title: 'Wi-Fi Woes at Home',        image: 'assets/images/wifi-woes-at-home.png',       genre: 'Comedy'        },
+    { title: "Super Subbu's Challenge",   image: 'assets/images/super-subbus-challenge.png',  genre: 'Comedy'        },
+    { title: 'Public Prank Party',        image: 'assets/images/public-prank-party.png',      genre: 'Comedy'        },
+    { title: 'Rainy Rendezvous',          image: 'assets/images/rainy-rendezvous.png',        genre: 'Romance'       },
+    { title: 'Kitchen Kadhai',            image: 'assets/images/kitchen-kadhai.png',          genre: 'Slice of Life' },
+    { title: 'Night Secret',              image: 'assets/images/coastal-secrets.png',         genre: 'Thriller'      },
+    { title: 'Office Romance',            image: 'assets/images/love-at-first-sight.png',     genre: 'Romance'       },
+    { title: 'Prank Gone Wrong',          image: 'assets/images/public-prank-party.png',      genre: 'Comedy'        },
+    { title: 'Monsoon Stories',           image: 'assets/images/rainy-rendezvous.png',        genre: 'Slice of Life' },
+  ];
+
+  /* Popular Searches — curated hand-picked subset */
+  const POPULAR = [
+    SERIES[1], // Coastal Secrets
+    SERIES[2], // Love at First Sight
+    SERIES[5], // Public Prank Party
+    SERIES[7], // Kitchen Kadhai
+    SERIES[6], // Rainy Rendezvous
+  ];
+
+  /* Recommendations — different picks */
+  const RECOMMENDED = [
+    SERIES[0], // Home Turf Hijinks
+    SERIES[4], // Super Subbu's Challenge
+    SERIES[3], // Wi-Fi Woes at Home
+    SERIES[6], // Rainy Rendezvous
+    SERIES[7], // Kitchen Kadhai
+    SERIES[2], // Love at First Sight
+  ];
+
+  const srOverlay = document.getElementById('search-overlay');
+  const srInput   = document.getElementById('search-input');
+  const srResults = document.getElementById('search-results');
+  const srClear   = document.getElementById('search-clear');
+  const srChips   = Array.from(document.querySelectorAll('.genre-chip'));
+
+  let activeGenre = 'All';
+
+  /* ── Recent searches (localStorage) ── */
+  const MAX_RECENT = 5;
+  function getRecent() {
+    try { return JSON.parse(localStorage.getItem('ks_recent') || '[]'); } catch { return []; }
+  }
+  function addRecent(title) {
+    let r = getRecent().filter(t => t !== title);
+    r.unshift(title);
+    localStorage.setItem('ks_recent', JSON.stringify(r.slice(0, MAX_RECENT)));
+  }
+  function removeRecent(title) {
+    localStorage.setItem('ks_recent', JSON.stringify(getRecent().filter(t => t !== title)));
+  }
+
+  /* ── Highlight matched query in text ── */
+  function highlight(text, query) {
+    if (!query) return text;
+    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return text.replace(new RegExp(`(${escaped})`, 'gi'), '<mark class="sr-match">$1</mark>');
+  }
+
+  /* ── "Did you mean?" suggestion ── */
+  function didYouMean(query, genre) {
+    if (genre !== 'All') {
+      const withoutGenre = SERIES.filter(s => !query || s.title.toLowerCase().includes(query.toLowerCase()));
+      if (withoutGenre.length > 0)
+        return `Try removing the <strong>${genre}</strong> filter`;
+    }
+    if (query.length >= 3) {
+      const partial = SERIES.find(s =>
+        s.title.toLowerCase().split(' ').some(w => w.startsWith(query.toLowerCase().slice(0, 3)))
+      );
+      if (partial) return `Did you mean <strong>${partial.title}</strong>?`;
+    }
+    return 'Try a different keyword or genre';
+  }
+
+  function isSearchActive() {
+    return srInput.value.trim().length > 0 || activeGenre !== 'All';
+  }
+
+  function openSearch() {
+    srOverlay.classList.add('open');
+    setTimeout(() => srInput.focus(), 50);
+    renderDefault();
+  }
+
+  function closeSearch() {
+    srOverlay.classList.remove('open');
+    srInput.value = '';
+    srClear.classList.remove('visible');
+    activeGenre = 'All';
+    srChips.forEach(c => c.classList.toggle('active', c.dataset.genre === 'All'));
+  }
+
+  /* ── Card template ── */
+  function sCard(s) {
+    return `<div class="s-card">
+      <div class="s-thumb">
+        <img src="${s.image}" alt="${s.title}" loading="lazy">
+        <div class="s-gradient"></div>
+        <div class="s-name">${s.title}</div>
+      </div>
+    </div>`;
+  }
+
+  /* ── Bind s-card clicks to fill input + run search ── */
+  function bindCardClicks() {
+    srResults.querySelectorAll('.s-card').forEach(card => {
+      const nameEl = card.querySelector('.s-name');
+      if (!nameEl) return;
+      card.addEventListener('click', () => {
+        const title = nameEl.textContent;
+        srInput.value = title;
+        srClear.classList.add('visible');
+        addRecent(title);
+        renderResults();
+      });
+    });
+  }
+
+  /* ── Default state ── */
+  function renderDefault() {
+    document.querySelector('.genre-filter').classList.remove('visible');
+    const recent = getRecent();
+    const recentHTML = recent.length ? `
+      <div class="sr-section">
+        <div class="sr-section-header">
+          <div class="sr-section-title">Recent Searches</div>
+          <div class="sr-clear-all" id="sr-clear-all">Clear all</div>
+        </div>
+        <div class="sr-recent-wrap">
+          ${recent.map(t => `
+            <div class="sr-recent-chip" data-title="${t.replace(/"/g,'&quot;')}">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/>
+              </svg>
+              <span>${t}</span>
+              <div class="sr-recent-remove" data-title="${t.replace(/"/g,'&quot;')}">
+                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>` : '';
+
+    srResults.innerHTML = `
+      ${recentHTML}
+      <div class="sr-section">
+        <div class="sr-section-header">
+          <div class="sr-section-title">Popular Searches</div>
+        </div>
+        <div class="row-scroll">${POPULAR.map(sCard).join('')}</div>
+      </div>
+      <div class="sr-section" style="padding-bottom:24px;">
+        <div class="sr-section-header">
+          <div class="sr-section-title">Recommendations for you</div>
+        </div>
+        <div class="row-scroll">${RECOMMENDED.map(sCard).join('')}</div>
+      </div>`;
+
+    bindCardClicks();
+
+    /* recent chip — tap to search */
+    srResults.querySelectorAll('.sr-recent-chip').forEach(chip => {
+      chip.addEventListener('click', e => {
+        if (e.target.closest('.sr-recent-remove')) return;
+        srInput.value = chip.dataset.title;
+        srClear.classList.add('visible');
+        renderResults();
+      });
+    });
+
+    /* recent chip — remove */
+    srResults.querySelectorAll('.sr-recent-remove').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        removeRecent(btn.dataset.title);
+        renderDefault();
+      });
+    });
+
+    /* clear all recent */
+    const clearAll = document.getElementById('sr-clear-all');
+    if (clearAll) clearAll.addEventListener('click', () => {
+      localStorage.removeItem('ks_recent');
+      renderDefault();
+    });
+  }
+
+  /* ── Active results state ── */
+  function renderResults() {
+    document.querySelector('.genre-filter').classList.add('visible');
+
+    const query    = srInput.value.trim();
+    const qLower   = query.toLowerCase();
+    const filtered = SERIES.filter(s => {
+      const matchGenre = activeGenre === 'All' || s.genre === activeGenre;
+      const matchQuery = !query || s.title.toLowerCase().includes(qLower);
+      return matchGenre && matchQuery;
+    });
+
+    const labelText = query ? `Results for "${query}"` : `${activeGenre} Series`;
+    const countText = `${filtered.length} ${filtered.length === 1 ? 'result' : 'results'}`;
+
+    if (filtered.length === 0) {
+      srResults.innerHTML = `
+        <div class="results-label">${labelText}</div>
+        <div class="search-empty">
+          <div class="search-empty-icon">
+            <svg width="30" height="30" fill="none" stroke="#CF2E4E" stroke-width="1.8" viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/>
+            </svg>
+          </div>
+          <div class="search-empty-title">No results found</div>
+          <div class="search-empty-sub">${didYouMean(query, activeGenre)}</div>
+        </div>`;
+      return;
+    }
+
+    srResults.innerHTML = `
+      <div class="results-label">${labelText}</div>
+      <div class="results-count">${countText}</div>
+      <div class="search-grid">${filtered.map(s => `
+        <div class="sr-thumb-card">
+          <img src="${s.image}" alt="${s.title}" loading="lazy">
+          <div class="sr-tc-gradient"></div>
+          <div class="sr-tc-name">${highlight(s.title, query)}</div>
+        </div>`).join('')
+      }</div>`;
+
+    /* result card click → save to recent */
+    srResults.querySelectorAll('.sr-thumb-card').forEach((card, i) => {
+      card.addEventListener('click', () => addRecent(filtered[i].title));
+    });
+  }
+
+  function renderSearch() {
+    isSearchActive() ? renderResults() : renderDefault();
+  }
+
+  /* Open on search box click */
+  document.querySelector('.search-box').addEventListener('click', openSearch);
+
+  /* Back button */
+  document.getElementById('search-back').addEventListener('click', closeSearch);
+
+  /* Genre chips */
+  srChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      activeGenre = chip.dataset.genre;
+      srChips.forEach(c => c.classList.toggle('active', c === chip));
+      renderSearch();
+    });
+  });
+
+  /* Typing */
+  srInput.addEventListener('input', () => {
+    srClear.classList.toggle('visible', srInput.value.length > 0);
+    renderSearch();
+  });
+
+  /* Clear — back to default */
+  srClear.addEventListener('click', () => {
+    srInput.value = '';
+    srClear.classList.remove('visible');
+    activeGenre = 'All';
+    srChips.forEach(c => c.classList.toggle('active', c.dataset.genre === 'All'));
+    srInput.focus();
+    renderDefault();
+  });
+
+  /* Scroll → dismiss keyboard */
+  srResults.addEventListener('scroll', () => {
+    if (document.activeElement === srInput) srInput.blur();
+  }, { passive: true });
 </script>
 </body>
 </html>
