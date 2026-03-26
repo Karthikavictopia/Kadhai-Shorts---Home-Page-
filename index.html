@@ -353,71 +353,31 @@
       from { opacity: 0; transform: translateY(6px); }
       to   { opacity: 1; transform: translateY(0); }
     }
-    /* ══════ FLOATING PREMIUM BANNER ══════ */
+    /* ══════ GO PREMIUM PILL ══════ */
     .premium-float {
-      position: absolute;
-      bottom: 77px;
-      left: 16px; right: 16px;
-      background: linear-gradient(105deg, #F9D684 0%, #FBF1BF 60%, #F9D684 100%);
-      border-radius: 14px;
-      padding: 11px 14px;
+      flex-shrink: 0;
+      margin: 0 20px 8px;
+      height: 46px;
+      background: linear-gradient(90deg, #F9D684 0%, #FBF1BF 55%, #F9D684 100%);
+      border-radius: 50px;
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 10px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.5), 0 0 0 1px rgba(249,214,132,0.3);
-      z-index: 200;
-      transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease;
-    }
-    .premium-float.dismissed {
-      transform: translateY(30px);
-      opacity: 0;
-      pointer-events: none;
-    }
-    .premium-logo-wrap {
-      flex-shrink: 0;
-      width: 36px; height: 36px;
-      border-radius: 9px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-    }
-    .premium-logo-wrap img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      filter: sepia(1) saturate(4) hue-rotate(-10deg) brightness(1.15);
-    }
-    .premium-float-text {
-      flex: 1; min-width: 0;
-    }
-    .premium-float-title {
-      font-size: 15px; font-weight: 700;
-      color: #4A2800;
-      line-height: 1.2;
-    }
-    .premium-float-sub {
-      font-size: 12px; font-weight: 400;
-      color: #7A4E10;
-      margin-top: 1px;
-    }
-    .premium-float-cta {
-      flex-shrink: 0;
-      height: 32px;
-      padding: 0 14px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #C87A1A 0%, #8B4A00 100%);
-      color: #FBF1BF;
-      font-size: 13px; font-weight: 600;
-      display: flex; align-items: center;
       cursor: pointer;
-      white-space: nowrap;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.35), 0 0 0 1px rgba(249,214,132,0.25);
     }
-    .premium-float-close {
+    .premium-float img {
+      width: 28px; height: 28px;
+      border-radius: 7px;
+      filter: sepia(1) saturate(4) hue-rotate(-10deg) brightness(1.15);
       flex-shrink: 0;
-      width: 24px; height: 24px;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; opacity: 0.55;
-      transition: opacity 0.15s;
     }
-    .premium-float-close:active { opacity: 1; }
+    .premium-float span {
+      font-size: 15px; font-weight: 600;
+      color: #4A2800;
+      letter-spacing: 0.2px;
+    }
 
     /* free badge on cards */
     .s-free-badge {
@@ -655,7 +615,7 @@
       overflow-y: auto;
       overflow-x: hidden;
       scrollbar-width: none;
-      padding: 8px 0 160px;
+      padding: 8px 0 24px;
     }
     .scroll-body::-webkit-scrollbar { display: none; }
 
@@ -1316,51 +1276,6 @@
       </div>
     </div>
 
-    <!-- Free to Watch -->
-    <div class="section" style="margin-top:24px;">
-      <div class="section-header">
-        <div style="display:flex;align-items:center;gap:7px;">
-          <svg width="15" height="15" viewBox="0 0 24 24"><defs><linearGradient id="g-free" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00C853"/><stop offset="100%" stop-color="#69F0AE"/></linearGradient></defs><path fill="url(#g-free)" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
-          <div class="section-title">Free to Watch</div>
-        </div>
-        <div class="section-see-all" style="font-size:13px;color:#FF6B81;cursor:pointer;">See All</div>
-      </div>
-      <div class="row-scroll">
-        <div class="s-card">
-          <div class="s-thumb">
-            <img src="assets/images/home-turf-hijinks.png" alt="" loading="lazy"/>
-            <div class="s-gradient"></div>
-            <div class="s-free-badge">FREE</div>
-            <div class="s-name">Home Turf Hijinks</div>
-          </div>
-        </div>
-        <div class="s-card">
-          <div class="s-thumb">
-            <img src="assets/images/public-prank-party.png" alt="" loading="lazy"/>
-            <div class="s-gradient"></div>
-            <div class="s-free-badge">FREE</div>
-            <div class="s-name">Public Prank Party</div>
-          </div>
-        </div>
-        <div class="s-card">
-          <div class="s-thumb">
-            <img src="assets/images/wifi-woes-at-home.png" alt="" loading="lazy"/>
-            <div class="s-gradient"></div>
-            <div class="s-free-badge">FREE</div>
-            <div class="s-name">Wi-Fi Woes at Home</div>
-          </div>
-        </div>
-        <div class="s-card">
-          <div class="s-thumb">
-            <img src="assets/images/super-subbus-challenge.png" alt="" loading="lazy"/>
-            <div class="s-gradient"></div>
-            <div class="s-free-badge">FREE</div>
-            <div class="s-name">Super Subbu's</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Short & Sweet -->
     <div class="section" style="margin-top:24px;">
       <div class="section-header">
@@ -1368,14 +1283,12 @@
           <svg width="15" height="15" viewBox="0 0 24 24"><defs><linearGradient id="g-bolt" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F16623"/><stop offset="100%" stop-color="#E71F2C"/></linearGradient></defs><path fill="url(#g-bolt)" d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>
           <div class="section-title">Short &amp; Sweet</div>
         </div>
-        <div class="section-see-all" style="font-size:13px;color:#FF6B81;cursor:pointer;">See All</div>
       </div>
       <div class="row-scroll">
         <div class="s-card">
           <div class="s-thumb">
             <img src="assets/images/public-prank-party.png" alt="" loading="lazy"/>
             <div class="s-gradient"></div>
-            <div class="s-dur-badge">4 min</div>
             <div class="s-name">Public Prank Party</div>
           </div>
         </div>
@@ -1383,7 +1296,6 @@
           <div class="s-thumb">
             <img src="assets/images/wifi-woes-at-home.png" alt="" loading="lazy"/>
             <div class="s-gradient"></div>
-            <div class="s-dur-badge">5 min</div>
             <div class="s-name">Wi-Fi Woes</div>
           </div>
         </div>
@@ -1391,7 +1303,6 @@
           <div class="s-thumb">
             <img src="assets/images/home-turf-hijinks.png" alt="" loading="lazy"/>
             <div class="s-gradient"></div>
-            <div class="s-dur-badge">3 min</div>
             <div class="s-name">Home Turf Hijinks</div>
           </div>
         </div>
@@ -1399,7 +1310,6 @@
           <div class="s-thumb">
             <img src="assets/images/super-subbus-challenge.png" alt="" loading="lazy"/>
             <div class="s-gradient"></div>
-            <div class="s-dur-badge">5 min</div>
             <div class="s-name">Super Subbu's</div>
           </div>
         </div>
@@ -1413,7 +1323,6 @@
           <svg width="15" height="15" viewBox="0 0 24 24"><defs><linearGradient id="g-heart" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FF6B81"/><stop offset="100%" stop-color="#CF2E4E"/></linearGradient></defs><path fill="url(#g-heart)" d="M12 21.593c-5.63-5.539-11-10.297-11-14.402C1 3.759 3.764 2 6.5 2c1.958 0 3.848.754 5.5 2.034C13.652 2.754 15.542 2 17.5 2 20.236 2 23 3.759 23 7.191c0 4.105-5.37 8.863-11 14.402z"/></svg>
           <div class="section-title">Romance Picks</div>
         </div>
-        <div class="section-see-all" style="font-size:13px;color:#FF6B81;cursor:pointer;">See All</div>
       </div>
       <div class="row-scroll">
         <div class="s-card">
@@ -1453,21 +1362,10 @@
 
   </div><!-- /scroll-body -->
 
-  <!-- Floating Go Premium Banner -->
+  <!-- Go Premium Pill -->
   <div class="premium-float" id="premium-float">
-    <div class="premium-logo-wrap">
-      <img src="assets/images/Kadhaishorts Logo.png" alt="K"/>
-    </div>
-    <div class="premium-float-text">
-      <div class="premium-float-title">Go Premium</div>
-      <div class="premium-float-sub">Unlock all episodes · No ads</div>
-    </div>
-    <div class="premium-float-cta">Subscribe</div>
-    <div class="premium-float-close" id="premium-close">
-      <svg width="12" height="12" fill="none" stroke="#7A4E10" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24">
-        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-      </svg>
-    </div>
+    <img src="assets/images/Kadhaishorts Logo.png" alt="K"/>
+    <span>Go Premium</span>
   </div>
 
   <!-- Bottom Nav -->
@@ -2019,11 +1917,6 @@
     srClear.classList.toggle('visible', srInput.value.length > 0);
     clearTimeout(searchDebounceTimer);
     searchDebounceTimer = setTimeout(renderSearch, 200);
-  });
-
-  /* ══════ PREMIUM FLOAT DISMISS ══════ */
-  document.getElementById('premium-close').addEventListener('click', () => {
-    document.getElementById('premium-float').classList.add('dismissed');
   });
 
   /* ══════════════════════════════════
