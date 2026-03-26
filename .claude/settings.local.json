@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell.exe -NoProfile -Command \"& { \\\\$lines = Get-Content 'C:\\\\\\\\Claude Explore\\\\\\\\Kadhaishorts\\\\\\\\index.html'; for \\(\\\\$i=0; \\\\$i -lt \\\\$lines.Count; \\\\$i++\\) { if \\(\\\\$lines[\\\\$i] -match '[^\\\\x00-\\\\x7F]'\\) { Write-Output \\('Line ' + \\(\\\\$i+1\\) + ': ' + \\\\$lines[\\\\$i].Trim\\(\\)\\) } } }\")",
+      "WebFetch(domain:www.svgrepo.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:unpkg.com)",
+      "Bash(mv \"image.png\" \"rainy-rendezvous.png\")",
+      "Bash(mv \"image 50.png\" \"love-at-first-sight.png\")",
+      "Bash(mv \"image 372.png\" \"kitchen-kadhai.png\")",
+      "Bash(mv \"Home turf.png\" \"home-turf-hijinks.png\")",
+      "Bash(mv \"image 62.png\" \"coastal-secrets.png\")",
+      "Bash(ls:*)",
+      "Bash(mkdir -p \"/c/Claude Explore/Kadhaishorts/assets/images\")",
+      "Bash(mv \"/c/Claude Explore/Kadhaishorts/coastal-secrets.png\" \"/c/Claude Explore/Kadhaishorts/gift-icon.png\" \"/c/Claude Explore/Kadhaishorts/home-turf-hijinks.png\" \"/c/Claude Explore/Kadhaishorts/kitchen-kadhai.png\" \"/c/Claude Explore/Kadhaishorts/love-at-first-sight.png\" \"/c/Claude Explore/Kadhaishorts/Media \\(2\\).jpg\" \"/c/Claude Explore/Kadhaishorts/public-prank-party.png\" \"/c/Claude Explore/Kadhaishorts/rainy-rendezvous.png\" \"/c/Claude Explore/Kadhaishorts/super-subbus-challenge.png\" \"/c/Claude Explore/Kadhaishorts/wifi-woes-at-home.png\" \"/c/Claude Explore/Kadhaishorts/assets/images/\")",
+      "mcp__claude_ai_Figma__get_design_context",
+      "mcp__claude_ai_Figma__use_figma",
+      "mcp__claude_ai_Figma__get_screenshot"
+    ]
+  }
+}
