@@ -218,6 +218,7 @@
     }
 
     /* ── Results header — section-style ── */
+    /* ── Results header — section-style ── */
     .sr-results-header {
       display: flex;
       align-items: center;
@@ -225,20 +226,13 @@
       padding: 10px 16px 10px;
       animation: fadeSlideUp 0.22s ease forwards;
     }
-    .sr-results-meta {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .sr-results-label {
+      font-size: 13px; font-weight: 400;
+      color: var(--grey-text);
     }
-    .sr-results-dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: var(--primary);
-      flex-shrink: 0;
-    }
-    .sr-results-title {
-      font-size: 17px; font-weight: 600;
+    .sr-results-label strong {
       color: var(--white);
+      font-weight: 600;
     }
     .sr-count-badge {
       font-size: 11px; font-weight: 500;
@@ -1967,14 +1961,13 @@
       return matchGenre && matchQuery;
     });
 
-    const titleText  = query ? `"${query}"` : activeGenre;
-    const badgeText  = `${filtered.length} ${filtered.length === 1 ? 'drama' : 'dramas'}`;
+    const labelText = query
+      ? `results for <strong>"${query}"</strong>`
+      : `all <strong>${activeGenre}</strong> dramas`;
+    const badgeText = `${filtered.length} ${filtered.length === 1 ? 'drama' : 'dramas'}`;
     const headerHTML = `
       <div class="sr-results-header">
-        <div class="sr-results-meta">
-          <span class="sr-results-dot"></span>
-          <span class="sr-results-title">${titleText}</span>
-        </div>
+        <span class="sr-results-label">${labelText}</span>
         <span class="sr-count-badge">${badgeText}</span>
       </div>`;
 
