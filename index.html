@@ -95,7 +95,8 @@
       display: flex;
       flex-direction: column;
       transform: translateY(100%);
-      transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+      transition: transform 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
     }
     .search-overlay.open { transform: translateY(0); }
 
@@ -189,7 +190,13 @@
     .search-results::-webkit-scrollbar { display: none; }
 
     /* default state sections */
-    .sr-section { padding: 20px 0 0; }
+    .sr-section {
+      padding: 20px 0 0;
+      animation: fadeSlideUp 0.3s ease both;
+    }
+    .sr-section:nth-child(2) { animation-delay: 0.05s; }
+    .sr-section:nth-child(3) { animation-delay: 0.12s; }
+    .sr-section:nth-child(4) { animation-delay: 0.19s; }
     .sr-section-header {
       display: flex; align-items: center;
       justify-content: space-between;
@@ -248,6 +255,11 @@
     @keyframes shimmer-sweep {
       0%   { background-position: 200% center; }
       100% { background-position: -200% center; }
+    }
+    /* GPU-composited shimmer for card thumbnails */
+    @keyframes shimmer-slide {
+      0%   { transform: translateX(-100%); }
+      100% { transform: translateX(250%); }
     }
     @keyframes fadeSlideUp {
       from { opacity: 0; transform: translateY(10px); }
@@ -346,8 +358,7 @@
     }
     .result-card-genre {
       position: absolute; top: 8px; left: 8px;
-      background: rgba(20,20,20,0.78);
-      backdrop-filter: blur(4px);
+      background: rgba(20,20,20,0.92);
       color: var(--primary-light);
       font-size: 10px; font-weight: 500;
       padding: 3px 7px; border-radius: 6px;
@@ -359,6 +370,163 @@
       padding: 28px 8px 9px;
       font-size: 13px; font-weight: 600;
       color: #fff; line-height: 1.25;
+    }
+
+    /* ── Top 10 For You ── */
+    .t10-row {
+      display: flex; gap: 10px;
+      overflow-x: auto; scrollbar-width: none;
+      padding: 0 20px 4px;
+      overscroll-behavior-x: contain;
+      -webkit-overflow-scrolling: touch;
+    }
+    .t10-row::-webkit-scrollbar { display: none; }
+    .t10-card {
+      flex-shrink: 0;
+      width: 120px;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .t10-card:active { transform: scale(0.94); }
+    .t10-thumb {
+      width: 120px; height: 170px;
+      border-radius: 10px;
+      overflow: hidden; position: relative;
+      background: #1a1a1a;
+    }
+    .t10-thumb img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      position: relative; z-index: 2;
+    }
+    .t10-thumb::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%);
+      transform: translateX(-100%);
+      animation: shimmer-slide 1.6s ease-in-out infinite;
+      z-index: 1; pointer-events: none;
+    }
+    .t10-thumb.loaded::before { display: none; }
+    /* dark scrim at bottom so rank number reads cleanly */
+    .t10-thumb::after {
+      content: ''; position: absolute;
+      bottom: 0; left: 0; right: 0; height: 60%;
+      background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%);
+      z-index: 3; pointer-events: none;
+    }
+    .t10-rank {
+      position: absolute;
+      bottom: 4px; left: 7px;
+      font-size: 52px; font-weight: 900;
+      line-height: 1;
+      -webkit-text-stroke: 1.5px rgba(255,255,255,0.9);
+      -webkit-text-fill-color: rgba(255,255,255,0.15);
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.95));
+      z-index: 4;
+      pointer-events: none;
+    }
+    .t10-info {
+      padding: 6px 2px 0;
+    }
+    .t10-title {
+      font-size: 12px; font-weight: 600;
+      color: var(--white);
+      line-height: 1.3;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .t10-genre {
+      font-size: 11px; font-weight: 400;
+      color: var(--grey-text);
+      margin-top: 2px;
+    }
+
+    /* ── Post-search: 2-col grid with title below ── */
+    .search-grid-2col {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      padding: 8px 16px 24px;
+      animation: sr-fade-in 0.2s ease;
+    }
+    .sr-thumb-card-2 {
+      cursor: pointer;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #1a1a1a;
+      transition: transform 0.15s ease;
+      opacity: 0;
+      animation: cardPop 0.28s ease forwards;
+    }
+    .sr-thumb-card-2:nth-child(1) { animation-delay:   0ms; }
+    .sr-thumb-card-2:nth-child(2) { animation-delay:  50ms; }
+    .sr-thumb-card-2:nth-child(3) { animation-delay: 100ms; }
+    .sr-thumb-card-2:nth-child(4) { animation-delay:  80ms; }
+    .sr-thumb-card-2:nth-child(5) { animation-delay: 130ms; }
+    .sr-thumb-card-2:nth-child(6) { animation-delay: 180ms; }
+    .sr-thumb-card-2:nth-child(n+7) { animation-delay: 210ms; }
+    .sr-thumb-card-2:active { transform: scale(0.96); }
+    .sr-thumb-card-2 .sr2-img-wrap {
+      position: relative;
+      aspect-ratio: 150 / 212;
+    }
+    .sr-thumb-card-2 .sr2-img-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+    }
+    .sr-thumb-card-2 .sr2-name {
+      font-size: 13px; font-weight: 600;
+      color: var(--white);
+      padding: 6px 4px 2px;
+      line-height: 1.3;
+    }
+    .sr-thumb-card-2 .sr2-genre {
+      font-size: 11px; font-weight: 400;
+      color: var(--grey-text);
+      padding: 0 4px 8px;
+    }
+
+    /* ── Trending keyword chips ── */
+    .trending-chips {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      padding: 0 20px 4px;
+    }
+    .trending-chip {
+      display: flex; align-items: center; gap: 5px;
+      height: 30px; padding: 0 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.05);
+      color: var(--white);
+      font-family: 'Roboto', sans-serif;
+      font-size: 13px; font-weight: 400;
+      cursor: pointer; white-space: nowrap;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+    .trending-chip:active {
+      background: rgba(207,46,78,0.15);
+      border-color: rgba(207,46,78,0.35);
+    }
+    .trending-chip .tc-fire { font-size: 12px; }
+
+    /* ── Section header count badge ── */
+    .sr-section-count {
+      font-size: 12px; font-weight: 400;
+      color: var(--grey-text);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 2px 9px; border-radius: 6px;
+    }
+
+    /* ── Trending badge on result cards ── */
+    .sr-trending-badge {
+      position: absolute;
+      top: 7px; left: 7px;
+      background: var(--brand-gradient);
+      color: #fff;
+      font-size: 9px; font-weight: 700;
+      padding: 2px 6px; border-radius: 5px;
+      letter-spacing: 0.3px;
+      z-index: 4;
     }
 
     /* highlight matched text */
@@ -486,8 +654,7 @@
     .s-free-badge {
       position: absolute;
       top: 8px; left: 8px;
-      background: rgba(0,180,80,0.85);
-      backdrop-filter: blur(4px);
+      background: rgba(0,160,68,0.95);
       color: #fff;
       font-size: 10px; font-weight: 700;
       padding: 3px 7px; border-radius: 6px;
@@ -497,8 +664,7 @@
     .s-dur-badge {
       position: absolute;
       top: 8px; right: 8px;
-      background: rgba(20,20,20,0.78);
-      backdrop-filter: blur(4px);
+      background: rgba(20,20,20,0.92);
       color: #FF6B81;
       font-size: 10px; font-weight: 500;
       padding: 3px 7px; border-radius: 6px;
@@ -507,8 +673,7 @@
     .s-star-badge {
       position: absolute;
       top: 8px; left: 8px;
-      background: rgba(20,20,20,0.78);
-      backdrop-filter: blur(4px);
+      background: rgba(20,20,20,0.92);
       color: #F9D684;
       font-size: 10px; font-weight: 600;
       padding: 3px 7px; border-radius: 6px;
@@ -518,11 +683,90 @@
     .s-genre-tag {
       position: absolute;
       bottom: 30px; left: 8px;
-      background: rgba(207,46,78,0.75);
-      backdrop-filter: blur(4px);
+      background: rgba(207,46,78,0.92);
       color: #fff;
       font-size: 10px; font-weight: 500;
       padding: 2px 7px; border-radius: 5px;
+    }
+
+    /* ══════ HOME PAGE SKELETON ══════ */
+    .home-skeleton {
+      position: absolute;
+      inset: 0;
+      background: #0F0F0F;
+      z-index: 200;
+      overflow: hidden;
+      transition: opacity 0.5s ease;
+    }
+    .home-skeleton.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .hsk-sh {
+      background: linear-gradient(90deg, #1e1e1e 25%, #282828 50%, #1e1e1e 75%);
+      background-size: 200% 100%;
+      animation: shimmer-sweep 1.6s ease-in-out infinite;
+      border-radius: 6px;
+    }
+    .hsk-status {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px 4px;
+    }
+    .hsk-time { width: 42px; height: 15px; }
+    .hsk-status-icons { width: 60px; height: 12px; }
+    .hsk-topbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 20px 10px;
+    }
+    .hsk-searchbox { flex: 1; height: 36px; border-radius: 10px; }
+    .hsk-top-icons { display: flex; gap: 12px; }
+    .hsk-icon { width: 36px; height: 36px; border-radius: 50%; }
+    .hsk-carousel {
+      padding: 10px 0 0;
+      display: flex;
+      justify-content: center;
+    }
+    .hsk-c-card {
+      width: 280px;
+      height: clamp(300px, 46svh, 400px);
+      border-radius: 18px;
+      flex-shrink: 0;
+    }
+    .hsk-dots {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      padding: 14px 0 10px;
+    }
+    .hsk-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: #242424;
+    }
+    .hsk-dot.active { width: 20px; height: 6px; border-radius: 3px; background: #2e2e2e; }
+    .hsk-section { padding: 20px 0 0; }
+    .hsk-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      margin-bottom: 14px;
+    }
+    .hsk-sec-title { width: 130px; height: 20px; }
+    .hsk-sec-link { width: 48px; height: 14px; }
+    .hsk-cards-row {
+      display: flex;
+      gap: 10px;
+      padding: 0 16px;
+    }
+    .hsk-card {
+      flex: 1;
+      aspect-ratio: 150 / 212;
+      border-radius: 10px;
     }
 
     /* ══════ SPLASH / LOADING SCREEN ══════ */
@@ -622,6 +866,7 @@
       padding-left: calc(50% - 140px);
       padding-right: calc(50% - 140px);
       overscroll-behavior-x: contain;
+      will-change: scroll-position;
     }
     .carousel-track::-webkit-scrollbar { display: none; }
 
@@ -639,6 +884,7 @@
       will-change: transform, opacity;
       opacity: 0.55;
       cursor: pointer;
+      background: #1a1a1a;
     }
     .c-card.active {
       transform: scale(1) !important;
@@ -655,6 +901,7 @@
       pointer-events: none;
       position: absolute;
       inset: 0;
+      transition: opacity 0.35s ease;
     }
 
     /* video preview — always in DOM, fades in only when actually playing */
@@ -759,6 +1006,8 @@
       overflow-x: auto;
       scrollbar-width: none;
       padding: 0 20px 4px;
+      overscroll-behavior-x: contain;
+      -webkit-overflow-scrolling: touch;
     }
     .row-scroll::-webkit-scrollbar { display: none; }
 
@@ -768,17 +1017,35 @@
       transition: transform 0.15s ease;
     }
     .s-card:active { transform: scale(0.96); }
+    .s-card-sm { flex: 0 0 120px; }
     .s-thumb {
       width: 150px;
       height: 212px;
       border-radius: 10px;
       overflow: hidden;
       position: relative;
+      background: #1a1a1a;
     }
+    .s-thumb-sm { width: 120px; height: 170px; }
+    /* GPU-composited shimmer via transform — stops when image loads */
+    .s-thumb::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%);
+      transform: translateX(-100%);
+      animation: shimmer-slide 1.6s ease-in-out infinite;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .s-thumb.loaded::before { display: none; }
     .s-thumb img {
       width: 100%; height: 100%;
       object-fit: cover;
       display: block;
+      position: relative;
+      z-index: 2;
+      transition: opacity 0.35s ease;
     }
     .s-thumb .s-gradient {
       position: absolute;
@@ -819,9 +1086,10 @@
     .c-badge {
       position: absolute;
       top: 16px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: linear-gradient(135deg, #F16623 0%, #E71F2C 30%, #991C4A 100%);
+      left: 0; right: 0;
+      width: fit-content;
+      margin: 0 auto;
+      background: var(--brand-gradient);
       color: #ffffff;
       font-size: 12px;
       font-weight: 500;
@@ -835,9 +1103,10 @@
     .s-thumb .s-badge {
       position: absolute;
       top: 8px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: linear-gradient(135deg, #F16623 0%, #E71F2C 30%, #991C4A 100%);
+      left: 0; right: 0;
+      width: fit-content;
+      margin: 0 auto;
+      background: var(--brand-gradient);
       color: #ffffff;
       font-size: 9px;
       font-weight: 500;
@@ -850,8 +1119,8 @@
     /* ── continue watching extras ── */
     .cw-play {
       position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
+      top: calc(50% - 20px);
+      left: calc(50% - 20px);
       width: 40px; height: 40px;
       background: rgba(0,0,0,0.52);
       border: 1.5px solid rgba(255,255,255,0.32);
@@ -868,17 +1137,15 @@
     }
     .cw-bar {
       height: 100%;
-      background: linear-gradient(90deg, #F16623 0%, #E71F2C 100%);
+      background: var(--brand-gradient);
       border-radius: 0 2px 0 0;
     }
     /* episode label */
     .cw-ep {
       position: absolute;
       bottom: 8px; left: 8px;
-      background: rgba(0,0,0,0.60);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.82);
+      border: 1px solid rgba(255,255,255,0.10);
       color: rgba(255,255,255,0.92);
       font-size: 9px;
       font-weight: 500;
@@ -892,16 +1159,16 @@
     .s-thumb .tr-rank {
       position: absolute;
       bottom: 4px; left: 6px;
-      font-size: 58px;
+      font-size: 64px;
       font-weight: 900;
       line-height: 1;
       z-index: 3;
       letter-spacing: -3px;
       color: transparent;
-      -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.5);
-      -webkit-text-fill-color: rgba(255, 255, 255, 0.07);
+      -webkit-text-stroke: 2px rgba(255, 255, 255, 0.85);
+      -webkit-text-fill-color: rgba(255, 255, 255, 0.18);
       paint-order: stroke fill;
-      filter: drop-shadow(0 1px 4px rgba(0,0,0,0.8));
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.9));
     }
     /* trending fire badge */
     .s-thumb .tr-badge {
@@ -936,19 +1203,36 @@
       flex: 0 0 150px;
       cursor: pointer;
       transition: transform 0.15s ease;
+      border-radius: 10px;
+      overflow: hidden;
     }
     .cs-card:active { transform: scale(0.96); }
     .cs-thumb {
       width: 150px;
       height: 212px;
-      border-radius: 10px;
+      border-radius: 10px 10px 0 0;
       overflow: hidden;
       position: relative;
+      background: #1a1a1a;
     }
+    .cs-thumb::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%);
+      transform: translateX(-100%);
+      animation: shimmer-slide 1.6s ease-in-out infinite;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .cs-thumb.loaded::before { display: none; }
     .cs-thumb img {
       width: 100%; height: 100%;
       object-fit: cover;
       display: block;
+      position: relative;
+      z-index: 2;
+      transition: opacity 0.35s ease;
     }
     .cs-overlay {
       position: absolute;
@@ -970,33 +1254,18 @@
       gap: 3px;
       z-index: 3;
     }
-    .cs-thumb .cs-name {
-      position: absolute;
-      bottom: 38px; left: 0; right: 0;
-      padding: 0 8px;
-      font-size: 12px;
-      font-weight: 600;
-      color: #fff;
-      line-height: 1.3;
-      z-index: 3;
-    }
     .reserve-btn {
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(6px);
-      border-top: 1px solid rgba(255,255,255,0.12);
-      color: #fff;
+      width: 150px;
+      background: var(--brand-gradient);
+      color: #FFFFFF;
       font-size: 10px;
       font-weight: 600;
       padding: 8px 0;
-      border-radius: 0 0 10px 10px;
       white-space: nowrap;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 5px;
-      z-index: 3;
     }
 
     /* ── bottom nav ── */
@@ -1068,6 +1337,53 @@
   </div>
   <!-- /splash -->
 
+  <!-- ══════ HOME SKELETON ══════ -->
+  <div class="home-skeleton" id="home-skeleton">
+    <div class="hsk-status">
+      <div class="hsk-sh hsk-time"></div>
+      <div class="hsk-sh hsk-status-icons"></div>
+    </div>
+    <div class="hsk-topbar">
+      <div class="hsk-sh hsk-searchbox"></div>
+      <div class="hsk-top-icons">
+        <div class="hsk-sh hsk-icon"></div>
+        <div class="hsk-sh hsk-icon"></div>
+      </div>
+    </div>
+    <div class="hsk-carousel">
+      <div class="hsk-sh hsk-c-card"></div>
+    </div>
+    <div class="hsk-dots">
+      <div class="hsk-dot"></div>
+      <div class="hsk-dot active"></div>
+      <div class="hsk-dot"></div>
+      <div class="hsk-dot"></div>
+    </div>
+    <div class="hsk-section">
+      <div class="hsk-section-header">
+        <div class="hsk-sh hsk-sec-title"></div>
+        <div class="hsk-sh hsk-sec-link"></div>
+      </div>
+      <div class="hsk-cards-row">
+        <div class="hsk-sh hsk-card"></div>
+        <div class="hsk-sh hsk-card"></div>
+        <div class="hsk-sh hsk-card"></div>
+      </div>
+    </div>
+    <div class="hsk-section">
+      <div class="hsk-section-header">
+        <div class="hsk-sh hsk-sec-title" style="width:100px;"></div>
+        <div class="hsk-sh hsk-sec-link"></div>
+      </div>
+      <div class="hsk-cards-row">
+        <div class="hsk-sh hsk-card"></div>
+        <div class="hsk-sh hsk-card"></div>
+        <div class="hsk-sh hsk-card"></div>
+      </div>
+    </div>
+  </div>
+  <!-- /home-skeleton -->
+
   <!-- Status Bar -->
   <div class="status-bar">
     <div class="time">9:41</div>
@@ -1124,7 +1440,6 @@
         <img src="assets/images/home-turf-hijinks.png" alt="Home Turf Hijinks"/>
         <video src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" muted loop playsinline></video>
         <div class="c-badge">5 Free Episodes</div>
-        <div class="c-name">Home Turf Hijinks</div>
       </div>
 
       <!-- Card 2 -->
@@ -1132,7 +1447,6 @@
         <img src="assets/images/coastal-secrets.png" alt="Night Secret"/>
         <video src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4" muted loop playsinline></video>
         <div class="c-badge">7 Free Episodes</div>
-        <div class="c-name">Night Secret</div>
       </div>
 
       <!-- Card 3 -->
@@ -1140,7 +1454,6 @@
         <img src="assets/images/love-at-first-sight.png" alt="Love at First Sight"/>
         <video src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4" muted loop playsinline></video>
         <div class="c-badge">6 Free Episodes</div>
-        <div class="c-name">Love at First Sight</div>
       </div>
 
       <!-- Card 4 -->
@@ -1148,7 +1461,6 @@
         <img src="assets/images/wifi-woes-at-home.png" alt="Wi-Fi Woes at Home"/>
         <video src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4" muted loop playsinline></video>
         <div class="c-badge">3 Free Episodes</div>
-        <div class="c-name">Wi-Fi Woes at Home</div>
       </div>
 
       <!-- Card 5 -->
@@ -1156,7 +1468,6 @@
         <img src="assets/images/super-subbus-challenge.png" alt="Super Subbu's Challenge"/>
         <video src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4" muted loop playsinline></video>
         <div class="c-badge">4 Free Episodes</div>
-        <div class="c-name">Super Subbu's Challenge</div>
       </div>
 
     </div><!-- /track -->
@@ -1178,46 +1489,59 @@
         <div class="section-title">Continue Watching</div>
       </div>
       <div class="row-scroll">
+
         <div class="s-card">
           <div class="s-thumb">
             <img src="assets/images/home-turf-hijinks.png" alt="" loading="lazy"/>
             <div class="s-gradient"></div>
             <div class="s-badge">5 Free</div>
-            <div class="cw-play"><svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="cw-play">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+            </div>
             <div class="cw-ep">Ep 1 · 12 min left</div>
             <div class="cw-progress"><div class="cw-bar" style="width:62%"></div></div>
           </div>
         </div>
+
         <div class="s-card">
           <div class="s-thumb">
             <img src="assets/images/super-subbus-challenge.png" alt="" loading="lazy"/>
             <div class="s-gradient"></div>
             <div class="s-badge">4 Free</div>
-            <div class="cw-play"><svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="cw-play">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+            </div>
             <div class="cw-ep">Ep 1 · 8 min left</div>
             <div class="cw-progress"><div class="cw-bar" style="width:30%"></div></div>
           </div>
         </div>
+
         <div class="s-card">
           <div class="s-thumb">
             <img src="assets/images/love-at-first-sight.png" alt="" loading="lazy"/>
             <div class="s-gradient"></div>
             <div class="s-badge">6 Free</div>
-            <div class="cw-play"><svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="cw-play">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+            </div>
             <div class="cw-ep">Ep 2 · 5 min left</div>
             <div class="cw-progress"><div class="cw-bar" style="width:80%"></div></div>
           </div>
         </div>
+
         <div class="s-card">
           <div class="s-thumb">
             <img src="assets/images/coastal-secrets.png" alt="" loading="lazy"/>
             <div class="s-gradient"></div>
             <div class="s-badge">7 Free</div>
-            <div class="cw-play"><svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="cw-play">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+            </div>
             <div class="cw-ep">Ep 3 · 15 min left</div>
             <div class="cw-progress"><div class="cw-bar" style="width:45%"></div></div>
           </div>
         </div>
+
       </div>
     </div>
 
@@ -1294,11 +1618,10 @@
               <svg width="8" height="8" viewBox="0 0 24 24" fill="#FF6B81"><path d="M12 2a10 10 0 110 20A10 10 0 0112 2zm1 5h-2v6l5 3 1-1.73-4-2.27V7z"/></svg>
               Apr 2026
             </div>
-            <div class="cs-name">Rainy Rendezvous</div>
-            <div class="reserve-btn">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
-              Notify Me
-            </div>
+          </div>
+          <div class="reserve-btn">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+            Notify Me
           </div>
         </div>
         <div class="cs-card">
@@ -1309,11 +1632,10 @@
               <svg width="8" height="8" viewBox="0 0 24 24" fill="#FF6B81"><path d="M12 2a10 10 0 110 20A10 10 0 0112 2zm1 5h-2v6l5 3 1-1.73-4-2.27V7z"/></svg>
               May 2026
             </div>
-            <div class="cs-name">Kitchen Kadhai</div>
-            <div class="reserve-btn">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
-              Notify Me
-            </div>
+          </div>
+          <div class="reserve-btn">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+            Notify Me
           </div>
         </div>
         <div class="cs-card">
@@ -1324,11 +1646,10 @@
               <svg width="8" height="8" viewBox="0 0 24 24" fill="#FF6B81"><path d="M12 2a10 10 0 110 20A10 10 0 0112 2zm1 5h-2v6l5 3 1-1.73-4-2.27V7z"/></svg>
               May 2026
             </div>
-            <div class="cs-name">Locked Room</div>
-            <div class="reserve-btn">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
-              Notify Me
-            </div>
+          </div>
+          <div class="reserve-btn">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+            Notify Me
           </div>
         </div>
         <div class="cs-card">
@@ -1339,11 +1660,10 @@
               <svg width="8" height="8" viewBox="0 0 24 24" fill="#FF6B81"><path d="M12 2a10 10 0 110 20A10 10 0 0112 2zm1 5h-2v6l5 3 1-1.73-4-2.27V7z"/></svg>
               Jun 2026
             </div>
-            <div class="cs-name">Village Tales</div>
-            <div class="reserve-btn">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
-              Notify Me
-            </div>
+          </div>
+          <div class="reserve-btn">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+            Notify Me
           </div>
         </div>
       </div>
@@ -1361,33 +1681,25 @@
         <div class="s-card">
           <div class="s-thumb">
             <img src="assets/images/love-at-first-sight.png" alt="" loading="lazy"/>
-            <div class="s-gradient"></div>
             <div class="s-star-badge"><svg width="9" height="9" viewBox="0 0 24 24" fill="#F9D684"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>4.8</div>
-            <div class="s-name">Love at First Sight</div>
           </div>
         </div>
         <div class="s-card">
           <div class="s-thumb">
             <img src="assets/images/coastal-secrets.png" alt="" loading="lazy"/>
-            <div class="s-gradient"></div>
             <div class="s-star-badge"><svg width="9" height="9" viewBox="0 0 24 24" fill="#F9D684"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>4.7</div>
-            <div class="s-name">Coastal Secrets</div>
           </div>
         </div>
         <div class="s-card">
           <div class="s-thumb">
             <img src="assets/images/rainy-rendezvous.png" alt="" loading="lazy"/>
-            <div class="s-gradient"></div>
             <div class="s-star-badge"><svg width="9" height="9" viewBox="0 0 24 24" fill="#F9D684"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>4.9</div>
-            <div class="s-name">Rainy Rendezvous</div>
           </div>
         </div>
         <div class="s-card">
           <div class="s-thumb">
             <img src="assets/images/kitchen-kadhai.png" alt="" loading="lazy"/>
-            <div class="s-gradient"></div>
             <div class="s-star-badge"><svg width="9" height="9" viewBox="0 0 24 24" fill="#F9D684"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>4.6</div>
-            <div class="s-name">Kitchen Kadhai</div>
           </div>
         </div>
       </div>
@@ -1405,29 +1717,21 @@
         <div class="s-card">
           <div class="s-thumb">
             <img src="assets/images/public-prank-party.png" alt="" loading="lazy"/>
-            <div class="s-gradient"></div>
-            <div class="s-name">Public Prank Party</div>
           </div>
         </div>
         <div class="s-card">
           <div class="s-thumb">
             <img src="assets/images/wifi-woes-at-home.png" alt="" loading="lazy"/>
-            <div class="s-gradient"></div>
-            <div class="s-name">Wi-Fi Woes</div>
           </div>
         </div>
         <div class="s-card">
           <div class="s-thumb">
             <img src="assets/images/home-turf-hijinks.png" alt="" loading="lazy"/>
-            <div class="s-gradient"></div>
-            <div class="s-name">Home Turf Hijinks</div>
           </div>
         </div>
         <div class="s-card">
           <div class="s-thumb">
             <img src="assets/images/super-subbus-challenge.png" alt="" loading="lazy"/>
-            <div class="s-gradient"></div>
-            <div class="s-name">Super Subbu's</div>
           </div>
         </div>
       </div>
@@ -1445,33 +1749,21 @@
         <div class="s-card">
           <div class="s-thumb">
             <img src="assets/images/love-at-first-sight.png" alt="" loading="lazy"/>
-            <div class="s-gradient"></div>
-
-            <div class="s-name">Love at First Sight</div>
           </div>
         </div>
         <div class="s-card">
           <div class="s-thumb">
             <img src="assets/images/rainy-rendezvous.png" alt="" loading="lazy"/>
-            <div class="s-gradient"></div>
-
-            <div class="s-name">Rainy Rendezvous</div>
           </div>
         </div>
         <div class="s-card">
           <div class="s-thumb">
             <img src="assets/images/kitchen-kadhai.png" alt="" loading="lazy"/>
-            <div class="s-gradient"></div>
-
-            <div class="s-name">Kitchen Kadhai</div>
           </div>
         </div>
         <div class="s-card">
           <div class="s-thumb">
             <img src="assets/images/coastal-secrets.png" alt="" loading="lazy"/>
-            <div class="s-gradient"></div>
-
-            <div class="s-name">Coastal Secrets</div>
           </div>
         </div>
       </div>
@@ -1479,8 +1771,8 @@
 
   </div><!-- /scroll-body -->
 
-  <!-- Go Premium Pill — sticky above bottom nav -->
-  <div class="premium-float-wrap">
+  <!-- Go Premium Pill — sticky above bottom nav (hidden, restore display:flex to show) -->
+  <div class="premium-float-wrap" style="display:none;">
     <div class="premium-float" id="premium-float">
       <img src="assets/images/Kadhaishorts Logo.png" alt="K"/>
       <span>Go Premium</span>
@@ -1568,7 +1860,7 @@
         <svg width="16" height="16" fill="none" stroke="#929596" stroke-width="2.2" viewBox="0 0 24 24">
           <circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/>
         </svg>
-        <input class="search-input" id="search-input" type="text" placeholder="Search stories…" autocomplete="off" autocorrect="off" spellcheck="false"/>
+        <input class="search-input" id="search-input" type="text" placeholder="Search series, genre or mood…" autocomplete="off" autocorrect="off" spellcheck="false"/>
         <div class="search-clear" id="search-clear">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" viewBox="0 0 24 24">
             <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -1654,16 +1946,30 @@
     /* Use scroll-space positions — no layout reflow, accurate during scroll */
     const trackCx = track.scrollLeft + track.offsetWidth / 2;
     let closestIdx = 0, minDist = Infinity;
+    const step = CARD_W + GAP;
 
+    /* First pass: find closest (read-only) */
     allCards.forEach((card, i) => {
       const dist = Math.abs(cardCenters[i] - trackCx);
       if (dist < minDist) { minDist = dist; closestIdx = i; }
+    });
 
-      const step = CARD_W + GAP;
-      const t    = Math.max(0, 1 - dist / step);
-      const ratio = t * (2 - t);          // ease-out quad: fast rise → smooth settle
-      card.style.transform = `scale(${0.84 + 0.16 * ratio})`;
-      card.style.opacity   = String(0.55 + 0.45 * ratio);
+    /* Second pass: write transforms only for visible range (±3 cards) */
+    allCards.forEach((card, i) => {
+      const dist = Math.abs(cardCenters[i] - trackCx);
+      if (dist > step * 3) {
+        /* Far card — reset to base without triggering active */
+        if (card.style.transform !== 'scale(0.84)') card.style.transform = 'scale(0.84)';
+        if (card.style.opacity   !== '0.55')        card.style.opacity   = '0.55';
+        card.classList.remove('active');
+        return;
+      }
+      const t     = Math.max(0, 1 - dist / step);
+      const ratio = t * (2 - t);
+      const sc    = (0.84 + 0.16 * ratio).toFixed(4);
+      const op    = (0.55 + 0.45 * ratio).toFixed(4);
+      card.style.transform = `scale(${sc})`;
+      card.style.opacity   = op;
       card.classList.remove('active');
     });
 
@@ -1839,10 +2145,36 @@
     return srInput.value.trim().length > 0 || activeGenre !== 'All';
   }
 
+  /* Apply shimmer/loaded state to dynamically injected cards */
+  function applyShimmer(container) {
+    container.querySelectorAll('.s-thumb img, .cs-thumb img').forEach(img => {
+      const thumb = img.closest('.s-thumb, .cs-thumb');
+      if (!thumb) return;
+      if (img.complete && img.naturalWidth > 0) {
+        thumb.classList.add('loaded');
+        return;
+      }
+      img.style.opacity = '0';
+      const onLoad = () => {
+        img.style.transition = 'opacity 0.35s ease';
+        img.style.opacity = '1';
+        thumb.classList.add('loaded');
+      };
+      img.addEventListener('load',  onLoad, { once: true });
+      img.addEventListener('error', onLoad, { once: true });
+    });
+  }
+
   function openSearch() {
-    srOverlay.classList.add('open');
-    setTimeout(() => srInput.focus(), 50);
-    renderDefault();
+    renderDefault();                        // insert DOM content first
+    applyShimmer(srResults);               // mark cached images as loaded immediately
+    /* Double rAF: let browser flush DOM paint before starting transition */
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        srOverlay.classList.add('open');
+        srOverlay.addEventListener('transitionend', () => srInput.focus(), { once: true });
+      });
+    });
   }
 
   function closeSearch() {
@@ -1855,22 +2187,28 @@
 
   /* ── Card template ── */
   function sCard(s) {
-    return `<div class="s-card">
+    return `<div class="s-card" data-title="${s.title}">
       <div class="s-thumb">
         <img src="${s.image}" alt="${s.title}" loading="lazy">
-        <div class="s-gradient"></div>
-        <div class="s-name">${s.title}</div>
       </div>
     </div>`;
   }
 
-  /* ── Bind s-card clicks to fill input + run search ── */
+  /* Smaller card for Popular Searches row */
+  function sCardSmall(s) {
+    return `<div class="s-card s-card-sm" data-title="${s.title}">
+      <div class="s-thumb s-thumb-sm">
+        <img src="${s.image}" alt="${s.title}" loading="lazy">
+      </div>
+    </div>`;
+  }
+
+  /* ── Bind s-card + t10-card clicks to fill input + run search ── */
   function bindCardClicks() {
-    srResults.querySelectorAll('.s-card').forEach(card => {
-      const nameEl = card.querySelector('.s-name');
-      if (!nameEl) return;
+    srResults.querySelectorAll('.s-card, .t10-card').forEach(card => {
+      const title = card.dataset.title;
+      if (!title) return;
       card.addEventListener('click', () => {
-        const title = nameEl.textContent;
         srInput.value = title;
         srClear.classList.add('visible');
         addRecent(title);
@@ -1879,9 +2217,26 @@
     });
   }
 
-  /* ── Default state ── */
+  /* Top-10 card template */
+  function t10Card(s, rank) {
+    return `<div class="t10-card" data-title="${s.title}">
+      <div class="t10-thumb">
+        <img src="${s.image}" alt="${s.title}" loading="lazy">
+        <div class="t10-rank">${rank}</div>
+      </div>
+      <div class="t10-info">
+        <div class="t10-title">${s.title}</div>
+        <div class="t10-genre">${s.genre}</div>
+      </div>
+    </div>`;
+  }
+
+  const TRENDING_KEYWORDS = [
+    'Office Romance', 'Comedy', 'Thriller', 'Feel Good', 'New This Week', 'Romance', 'Slice of Life'
+  ];
+
   function renderDefault() {
-    document.querySelector('.genre-filter').classList.remove('visible');
+    document.querySelector('.genre-filter').classList.add('visible');
     const recent = getRecent();
     const recentHTML = recent.length ? `
       <div class="sr-section">
@@ -1905,20 +2260,56 @@
         </div>
       </div>` : '';
 
+    const top10 = SERIES.slice(0, 10);
+    const trendingHTML = `
+      <div class="sr-section" style="display:none;">
+        <div class="sr-section-header">
+          <div class="sr-section-title">Trending</div>
+        </div>
+        <div class="trending-chips">
+          ${TRENDING_KEYWORDS.map(k => `
+            <div class="trending-chip" data-keyword="${k}">
+              <span class="tc-fire">🔥</span>${k}
+            </div>`).join('')}
+        </div>
+      </div>`;
+
     srResults.innerHTML = `
       ${recentHTML}
+      ${trendingHTML}
       <div class="sr-section">
         <div class="sr-section-header">
-          <div class="sr-section-title">Popular Searches</div>
+          <div class="sr-section-title">Top 10 for you</div>
+          <span class="sr-section-count">This Week</span>
         </div>
-        <div class="row-scroll">${POPULAR.map(sCard).join('')}</div>
+        <div class="t10-row">${top10.map((s, i) => t10Card(s, i + 1)).join('')}</div>
       </div>
       <div class="sr-section" style="padding-bottom:24px;">
         <div class="sr-section-header">
-          <div class="sr-section-title">Recommendations for you</div>
+          <div class="sr-section-title">Popular Searches</div>
+          <span class="sr-section-count">${POPULAR.length} dramas</span>
         </div>
-        <div class="row-scroll">${RECOMMENDED.map(sCard).join('')}</div>
+        <div class="row-scroll">${POPULAR.map(sCardSmall).join('')}</div>
       </div>`;
+
+    /* shimmer for top-10 images */
+    srResults.querySelectorAll('.t10-thumb img').forEach(img => {
+      const thumb = img.closest('.t10-thumb');
+      if (img.complete && img.naturalWidth > 0) { thumb.classList.add('loaded'); return; }
+      const onLoad = () => thumb.classList.add('loaded');
+      img.addEventListener('load', onLoad, { once: true });
+      img.addEventListener('error', onLoad, { once: true });
+    });
+
+    /* trending keyword chip — tap to search */
+    srResults.querySelectorAll('.trending-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        srInput.value = chip.dataset.keyword;
+        srClear.classList.add('visible');
+        addRecent(chip.dataset.keyword);
+        renderResults();
+      });
+    });
 
     bindCardClicks();
 
@@ -1988,17 +2379,19 @@
 
     srResults.innerHTML = `
       ${headerHTML}
-      <div class="search-grid">${filtered.map(s => `
-        <div class="sr-thumb-card">
+      <div class="search-grid">${filtered.map((s, i) => `
+        <div class="sr-thumb-card" data-title="${s.title}">
           <img src="${s.image}" alt="${s.title}" loading="lazy">
-          <div class="sr-tc-gradient"></div>
-          <div class="sr-tc-name">${s.title}</div>
+          ${i < 3 ? '<div class="sr-trending-badge">🔥 Trending</div>' : ''}
         </div>`).join('')
       }</div>`;
 
     /* result card click → save to recent */
-    srResults.querySelectorAll('.sr-thumb-card').forEach((card, i) => {
-      card.addEventListener('click', () => addRecent(filtered[i].title));
+    srResults.querySelectorAll('.sr-thumb-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const title = card.dataset.title;
+        if (title) addRecent(title);
+      });
     });
   }
 
@@ -2070,13 +2463,37 @@
      SPLASH SCREEN
   ══════════════════════════════════ */
   const splash = document.getElementById('splash');
-  // Total animation: 0.9s draw + 0.1s delay + 0.35s fill + hold → dismiss at 1.6s
+  // Total animation: 0.9s draw + 0.1s delay + 0.35s fill + hold → dismiss at 4.2s
   setTimeout(() => {
     splash.classList.add('hide');
     splash.addEventListener('transitionend', () => {
       splash.style.display = 'none';
     }, { once: true });
   }, 4200);
+
+  /* ── Home skeleton: visible under splash, fades out 800ms after splash gone ── */
+  const homeSkeleton = document.getElementById('home-skeleton');
+  setTimeout(() => {
+    homeSkeleton.classList.add('hide');
+    homeSkeleton.addEventListener('transitionend', () => homeSkeleton.remove(), { once: true });
+  }, 5000);
+
+  /* ── Thumbnail shimmer: fade in on load, stop shimmer animation ── */
+  document.querySelectorAll('.s-thumb img, .cs-thumb img, .c-card > img').forEach(img => {
+    const container = img.closest('.s-thumb, .cs-thumb, .c-card');
+    if (img.complete && img.naturalWidth > 0) {
+      if (container) container.classList.add('loaded');
+      return;
+    }
+    img.style.opacity = '0';
+    const onLoad = () => {
+      img.style.transition = 'opacity 0.35s ease';
+      img.style.opacity = '1';
+      if (container) container.classList.add('loaded');
+    };
+    img.addEventListener('load',  onLoad, { once: true });
+    img.addEventListener('error', onLoad, { once: true });
+  });
 </script>
 </body>
 </html>
