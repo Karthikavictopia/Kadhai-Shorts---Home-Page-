@@ -217,16 +217,37 @@
       animation: sr-fade-in 0.2s ease;
     }
 
-    /* "Results for X" label */
-    .results-label {
-      font-size: 20px; font-weight: 600;
-      color: var(--white);
-      padding: 12px 16px 4px;
+    /* ── Results header — section-style ── */
+    .sr-results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px 10px;
+      animation: fadeSlideUp 0.22s ease forwards;
     }
-    .results-count {
-      font-size: 14px; font-weight: 400;
+    .sr-results-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sr-results-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--primary);
+      flex-shrink: 0;
+    }
+    .sr-results-title {
+      font-size: 17px; font-weight: 600;
+      color: var(--white);
+    }
+    .sr-count-badge {
+      font-size: 11px; font-weight: 500;
       color: var(--grey-text);
-      padding: 2px 16px 0;
+      background: #1e1e1e;
+      border: 1px solid #2a2a2a;
+      padding: 3px 10px;
+      border-radius: 6px;
+      flex-shrink: 0;
     }
 
     /* ── Shimmer skeleton loading ── */
@@ -273,8 +294,6 @@
     .shimmer-card:nth-child(6) { animation-delay: 0.28s; }
 
     /* ── Results entrance ── */
-    .results-label  { animation: fadeSlideUp 0.22s ease forwards; }
-    .results-count  { animation: fadeSlideUp 0.26s ease forwards; }
     .search-grid .sr-thumb-card {
       opacity: 0;
       animation: cardPop 0.28s ease forwards;
@@ -1948,12 +1967,20 @@
       return matchGenre && matchQuery;
     });
 
-    const labelText = query ? `Results for "${query}"` : `${activeGenre} Series`;
-    const countText = `${filtered.length} ${filtered.length === 1 ? 'result' : 'results'}`;
+    const titleText  = query ? `"${query}"` : activeGenre;
+    const badgeText  = `${filtered.length} ${filtered.length === 1 ? 'drama' : 'dramas'}`;
+    const headerHTML = `
+      <div class="sr-results-header">
+        <div class="sr-results-meta">
+          <span class="sr-results-dot"></span>
+          <span class="sr-results-title">${titleText}</span>
+        </div>
+        <span class="sr-count-badge">${badgeText}</span>
+      </div>`;
 
     if (filtered.length === 0) {
       srResults.innerHTML = `
-        <div class="results-label">${labelText}</div>
+        ${headerHTML}
         <div class="search-empty">
           <div class="search-empty-icon">
             <svg width="30" height="30" fill="none" stroke="#CF2E4E" stroke-width="1.8" viewBox="0 0 24 24">
@@ -1967,8 +1994,7 @@
     }
 
     srResults.innerHTML = `
-      <div class="results-label">${labelText}</div>
-      <div class="results-count">${countText}</div>
+      ${headerHTML}
       <div class="search-grid">${filtered.map(s => `
         <div class="sr-thumb-card">
           <img src="${s.image}" alt="${s.title}" loading="lazy">
