@@ -606,14 +606,14 @@
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
       padding-bottom: 12px;
-      padding-left: calc(50% - 155px);
-      padding-right: calc(50% - 155px);
+      padding-left: calc(50% - 140px);
+      padding-right: calc(50% - 140px);
       overscroll-behavior-x: contain;
     }
     .carousel-track::-webkit-scrollbar { display: none; }
 
     .c-card {
-      flex: 0 0 310px;
+      flex: 0 0 280px;
       height: clamp(340px, 56svh, 480px);
       scroll-snap-align: center;
       scroll-snap-stop: always;
@@ -1579,7 +1579,7 @@
 <script>
   const track   = document.getElementById('carousel');
   const dotsEl  = Array.from(document.getElementById('dots').querySelectorAll('.dot'));
-  const CARD_W  = 310;
+  const CARD_W  = 280;
   const GAP     = 10;
   const N       = 5; // real card count
 
