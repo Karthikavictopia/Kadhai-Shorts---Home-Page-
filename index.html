@@ -95,7 +95,7 @@
       display: flex;
       flex-direction: column;
       transform: translateY(100%);
-      transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
     }
     .search-overlay.open { transform: translateY(0); }
 
@@ -228,6 +228,64 @@
       color: var(--grey-text);
       padding: 2px 16px 0;
     }
+
+    /* ── Shimmer skeleton loading ── */
+    @keyframes shimmer-sweep {
+      0%   { background-position: 200% center; }
+      100% { background-position: -200% center; }
+    }
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes cardPop {
+      from { opacity: 0; transform: scale(0.94) translateY(8px); }
+      to   { opacity: 1; transform: scale(1)    translateY(0); }
+    }
+
+    .search-shimmer {
+      padding: 12px 16px 0;
+      animation: fadeSlideUp 0.2s ease forwards;
+    }
+    .shimmer-title {
+      width: 160px; height: 20px;
+      background: linear-gradient(90deg, #2a2a2a 25%, #353535 50%, #2a2a2a 75%);
+      background-size: 200% 100%;
+      animation: shimmer-sweep 1.4s ease-in-out infinite;
+      border-radius: 6px; margin-bottom: 14px;
+    }
+    .shimmer-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .shimmer-card {
+      aspect-ratio: 150 / 212;
+      background: linear-gradient(90deg, #2a2a2a 25%, #353535 50%, #2a2a2a 75%);
+      background-size: 200% 100%;
+      animation: shimmer-sweep 1.4s ease-in-out infinite;
+      border-radius: 10px;
+    }
+    .shimmer-card:nth-child(2) { animation-delay: 0.08s; }
+    .shimmer-card:nth-child(3) { animation-delay: 0.16s; }
+    .shimmer-card:nth-child(4) { animation-delay: 0.12s; }
+    .shimmer-card:nth-child(5) { animation-delay: 0.20s; }
+    .shimmer-card:nth-child(6) { animation-delay: 0.28s; }
+
+    /* ── Results entrance ── */
+    .results-label  { animation: fadeSlideUp 0.22s ease forwards; }
+    .results-count  { animation: fadeSlideUp 0.26s ease forwards; }
+    .search-grid .sr-thumb-card {
+      opacity: 0;
+      animation: cardPop 0.28s ease forwards;
+    }
+    .search-grid .sr-thumb-card:nth-child(1) { animation-delay:   0ms; }
+    .search-grid .sr-thumb-card:nth-child(2) { animation-delay:  50ms; }
+    .search-grid .sr-thumb-card:nth-child(3) { animation-delay: 100ms; }
+    .search-grid .sr-thumb-card:nth-child(4) { animation-delay:  80ms; }
+    .search-grid .sr-thumb-card:nth-child(5) { animation-delay: 130ms; }
+    .search-grid .sr-thumb-card:nth-child(6) { animation-delay: 180ms; }
+    .search-grid .sr-thumb-card:nth-child(n+7) { animation-delay: 210ms; }
 
     /* search result card — 3-col grid, matches s-card visual style */
     .sr-thumb-card {
@@ -653,7 +711,21 @@
     .scroll-body::-webkit-scrollbar { display: none; }
 
     /* section */
-    .section { padding: 20px 0 0; }
+    @keyframes sectionFadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .section {
+      padding: 20px 0 0;
+      animation: sectionFadeIn 0.45s ease forwards;
+      opacity: 0;
+    }
+    .section:nth-child(1) { animation-delay: 0.05s; }
+    .section:nth-child(2) { animation-delay: 0.12s; }
+    .section:nth-child(3) { animation-delay: 0.19s; }
+    .section:nth-child(4) { animation-delay: 0.26s; }
+    .section:nth-child(5) { animation-delay: 0.33s; }
+    .section:nth-child(6) { animation-delay: 0.40s; }
     .section-header {
       display: flex;
       align-items: center;
@@ -1941,12 +2013,34 @@
     if (document.activeElement === srInput) srInput.blur();
   }, { passive: true });
 
+  /* ── Shimmer skeleton while typing ── */
+  function showSearchShimmer() {
+    document.querySelector('.genre-filter').classList.add('visible');
+    srResults.innerHTML = `
+      <div class="search-shimmer">
+        <div class="shimmer-title"></div>
+        <div class="shimmer-grid">
+          <div class="shimmer-card"></div>
+          <div class="shimmer-card"></div>
+          <div class="shimmer-card"></div>
+          <div class="shimmer-card"></div>
+          <div class="shimmer-card"></div>
+          <div class="shimmer-card"></div>
+        </div>
+      </div>`;
+  }
+
   /* ── Debounced search input ── */
   let searchDebounceTimer = null;
   srInput.addEventListener('input', () => {
     srClear.classList.toggle('visible', srInput.value.length > 0);
     clearTimeout(searchDebounceTimer);
-    searchDebounceTimer = setTimeout(renderSearch, 200);
+    if (srInput.value.trim().length > 0) {
+      showSearchShimmer();
+      searchDebounceTimer = setTimeout(renderSearch, 480);
+    } else {
+      searchDebounceTimer = setTimeout(renderSearch, 200);
+    }
   });
 
   /* ══════════════════════════════════
