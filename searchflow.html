@@ -643,6 +643,209 @@ html, body {
 .nav-item .ic-outline { display: inline; }
 .nav-item.active .ic-solid   { display: inline; }
 .nav-item.active .ic-outline { display: none; }
+
+/* ══════════════════════════════════
+   SCREEN NAVIGATION
+══════════════════════════════════ */
+.screens-container {
+  flex: 1; min-height: 0;
+  position: relative; overflow: hidden;
+}
+.screen {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  opacity: 0; transform: translateY(10px);
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.22,1,0.36,1),
+              transform 0.3s cubic-bezier(0.22,1,0.36,1);
+  will-change: opacity, transform;
+}
+.screen.active { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+/* ── HOME SCREEN ── */
+.home-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 20px 10px; flex-shrink: 0;
+}
+.home-logo { display: flex; align-items: center; gap: 8px; }
+.home-logo img { height: 28px; width: 28px; border-radius: 7px; }
+.home-logo-text { font-size: 17px; font-weight: 700; color: var(--white); }
+.home-top-icons { display: flex; gap: 10px; }
+.home-icon-btn {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: #1e1e1e;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: opacity 0.15s;
+}
+.home-icon-btn:active { opacity: 0.6; }
+.home-scroll {
+  flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden;
+  scrollbar-width: none; padding-bottom: 24px;
+}
+.home-scroll::-webkit-scrollbar { display: none; }
+.home-hero {
+  margin: 4px 16px 0; border-radius: 14px; overflow: hidden;
+  position: relative; height: 220px; background: var(--surface); cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.home-hero:active { transform: scale(0.98); }
+.home-hero img { width:100%; height:100%; object-fit:cover; object-position:top center; display:block; }
+.home-hero-scrim {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.1) 60%, transparent 100%);
+}
+.home-hero-badge {
+  position: absolute; top: 12px; left: 12px;
+  background: var(--brand-gradient); color: #fff;
+  font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 8px;
+}
+.home-hero-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 12px 14px; }
+.home-hero-title { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+.home-hero-meta  { font-size: 12px; color: rgba(255,255,255,0.55); }
+.home-hero-btns  { display: flex; gap: 8px; padding: 10px 16px 0; }
+.home-btn-watch {
+  flex: 1; height: 42px; background: var(--brand-gradient); color: #fff;
+  font-family: 'Roboto', sans-serif; font-size: 15px; font-weight: 500;
+  border: none; border-radius: 10px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  transition: opacity 0.15s;
+}
+.home-btn-watch:active { opacity: 0.8; }
+.home-btn-list {
+  height: 42px; padding: 0 16px; background: transparent; color: var(--white);
+  font-family: 'Roboto', sans-serif; font-size: 15px; font-weight: 500;
+  border: 1px solid rgba(255,255,255,0.18); border-radius: 10px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  transition: background 0.15s;
+}
+.home-btn-list:active { background: rgba(255,255,255,0.06); }
+.h-section { padding: 20px 0 0; }
+.h-section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 16px; margin-bottom: 12px;
+}
+.h-section-title { font-size: 17px; font-weight: 700; color: var(--white); }
+.h-row {
+  display: flex; gap: 10px; padding: 0 16px 4px;
+  overflow-x: auto; scrollbar-width: none;
+  overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch;
+}
+.h-row::-webkit-scrollbar { display: none; }
+.h-card { flex-shrink: 0; width: 120px; cursor: pointer; transition: transform 0.15s ease; }
+.h-card:active { transform: scale(0.94); }
+.h-thumb {
+  width: 120px; height: 170px; border-radius: 10px; overflow: hidden;
+  position: relative; background: var(--surface);
+}
+.h-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.h-thumb-scrim {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 55%);
+}
+.h-thumb-name {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 20px 6px 6px; font-size: 11px; font-weight: 600;
+  color: #fff; line-height: 1.3;
+}
+
+/* ── MY LIST SCREEN ── */
+.ml-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 20px 10px; flex-shrink: 0;
+}
+.ml-title { font-size: 24px; font-weight: 700; color: var(--white); }
+.ml-tabs {
+  display: flex; padding: 0 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08); flex-shrink: 0;
+}
+.ml-tab {
+  padding: 10px 16px 12px; font-size: 15px; font-weight: 500;
+  color: var(--grey); cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s; margin-bottom: -1px;
+}
+.ml-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+.ml-scroll { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; }
+.ml-scroll::-webkit-scrollbar { display: none; }
+.ml-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; padding: 12px 16px 24px; }
+.ml-card {
+  cursor: pointer; border-radius: 10px; overflow: hidden;
+  position: relative; aspect-ratio: 150/212;
+  background: var(--surface); transition: transform 0.15s ease;
+}
+.ml-card:active { transform: scale(0.96); }
+.ml-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ml-card-scrim {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, transparent 55%);
+}
+.ml-card-genre {
+  position: absolute; top: 8px; left: 8px;
+  background: rgba(20,20,20,0.92); color: var(--primary-light);
+  font-size: 10px; font-weight: 500; padding: 3px 7px; border-radius: 6px;
+}
+.ml-card-name {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 28px 8px 9px; font-size: 13px; font-weight: 600;
+  color: #fff; line-height: 1.25;
+}
+
+/* ── PROFILE SCREEN ── */
+.pf-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 20px 10px; flex-shrink: 0;
+}
+.pf-title { font-size: 24px; font-weight: 700; color: var(--white); }
+.pf-scroll { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding-bottom: 24px; }
+.pf-scroll::-webkit-scrollbar { display: none; }
+.pf-header {
+  padding: 16px 20px 20px;
+  background: linear-gradient(180deg, rgba(207,46,78,0.15) 0%, transparent 100%);
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+.pf-avatar {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: var(--brand-gradient);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; font-weight: 700; color: #fff;
+  border: 2.5px solid rgba(255,255,255,0.15);
+}
+.pf-name  { font-size: 20px; font-weight: 700; color: var(--white); }
+.pf-email { font-size: 13px; color: var(--grey-text); }
+.pf-plan  {
+  display: flex; align-items: center; gap: 6px;
+  background: linear-gradient(90deg, #F9D684, #FBF1BF);
+  color: #673B21; font-size: 12px; font-weight: 700;
+  padding: 4px 14px; border-radius: 10px;
+}
+.pf-stats {
+  display: flex; padding: 14px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08); flex-shrink: 0;
+}
+.pf-stat { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.pf-stat + .pf-stat { border-left: 1px solid rgba(255,255,255,0.08); }
+.pf-stat-num   { font-size: 20px; font-weight: 700; color: var(--white); }
+.pf-stat-label { font-size: 12px; color: var(--grey-text); }
+.pf-section-label {
+  font-size: 12px; font-weight: 500; color: var(--grey-text);
+  padding: 16px 20px 8px; text-transform: uppercase; letter-spacing: 0.8px;
+}
+.pf-menu-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 20px; cursor: pointer; transition: background 0.15s;
+}
+.pf-menu-item:active { background: rgba(255,255,255,0.04); }
+.pf-icon {
+  width: 36px; height: 36px; border-radius: 10px; background: #1e1e1e;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.pf-text    { flex: 1; font-size: 16px; color: var(--white); }
+.pf-badge   { font-size: 11px; font-weight: 600; background: var(--brand-gradient); color: #fff; padding: 2px 8px; border-radius: 6px; }
+.pf-chevron { color: var(--grey); }
+.pf-menu-item.danger .pf-text { color: #FF6B81; }
+.pf-menu-item.danger .pf-icon { background: rgba(207,46,78,0.12); }
+.pf-divider { height: 1px; background: rgba(255,255,255,0.06); margin: 4px 0; }
 </style>
 </head>
 <body>
@@ -658,6 +861,90 @@ html, body {
 </div>
 
 <div class="phone">
+
+  <div class="screens-container">
+
+  <!-- ══════ HOME SCREEN ══════ -->
+  <div id="screen-home" class="screen">
+    <div class="status-bar">
+      <div class="time">9:41</div>
+      <div class="status-icons">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="white"><rect x="0" y="7" width="3" height="5" rx="0.8"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="0.8"/><rect x="9" y="2" width="3" height="10" rx="0.8"/><rect x="13.5" y="0" width="3" height="12" rx="0.8"/></svg>
+        <svg width="16" height="12" viewBox="0 0 24 18" fill="white"><path d="M12 5a14 14 0 0110.95 5.24l-2.1 2.1A11 11 0 0012 8a11 11 0 00-8.85 4.34l-2.1-2.1A14 14 0 0112 5zm0 5a9 9 0 016.97 3.3l-2.09 2.09A6 6 0 0012 13a6 6 0 00-4.88 2.39L5.03 13.3A9 9 0 0112 10zm0 5a4 4 0 013 1.35L12 19l-3-2.65A4 4 0 0112 15z"/></svg>
+        <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="0.5" y="0.5" width="22" height="12" rx="2" stroke="white" stroke-opacity="0.4"/><rect x="2" y="2" width="17" height="9" rx="1.2" fill="white"/><path d="M23.5 4.5v4a2 2 0 000-4z" fill="white" fill-opacity="0.4"/></svg>
+      </div>
+    </div>
+    <div class="home-topbar">
+      <div class="home-logo">
+        <img src="assets/images/Kadhaishorts Logo.png" alt="K">
+        <span class="home-logo-text">Kadhai Shorts</span>
+      </div>
+      <div class="home-top-icons">
+        <div class="home-icon-btn" id="home-search-btn" title="Search">
+          <svg width="18" height="18" fill="none" stroke="#CF2E4E" stroke-width="2.2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
+        </div>
+      </div>
+    </div>
+    <div class="home-scroll">
+      <!-- Featured hero -->
+      <div class="home-hero">
+        <img src="assets/images/coastal-secrets.png" alt="Coastal Secrets">
+        <div class="home-hero-scrim"></div>
+        <div class="home-hero-badge">7 Free Episodes</div>
+        <div class="home-hero-info">
+          <div class="home-hero-title">Coastal Secrets</div>
+          <div class="home-hero-meta">10 Episodes · Thriller</div>
+        </div>
+      </div>
+      <div class="home-hero-btns">
+        <button class="home-btn-watch">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+          Watch Now
+        </button>
+        <button class="home-btn-list">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          My List
+        </button>
+      </div>
+
+      <!-- Continue Watching -->
+      <div class="h-section">
+        <div class="h-section-header"><div class="h-section-title">Continue Watching</div></div>
+        <div class="h-row">
+          <div class="h-card"><div class="h-thumb"><img src="assets/images/home-turf-hijinks.png" alt="" loading="lazy"><div class="h-thumb-scrim"></div><div class="h-thumb-name">Home Turf Hijinks</div></div></div>
+          <div class="h-card"><div class="h-thumb"><img src="assets/images/love-at-first-sight.png" alt="" loading="lazy"><div class="h-thumb-scrim"></div><div class="h-thumb-name">Love at First Sight</div></div></div>
+          <div class="h-card"><div class="h-thumb"><img src="assets/images/super-subbus-challenge.png" alt="" loading="lazy"><div class="h-thumb-scrim"></div><div class="h-thumb-name">Super Subbu's Challenge</div></div></div>
+          <div class="h-card"><div class="h-thumb"><img src="assets/images/rainy-rendezvous.png" alt="" loading="lazy"><div class="h-thumb-scrim"></div><div class="h-thumb-name">Rainy Rendezvous</div></div></div>
+        </div>
+      </div>
+
+      <!-- Trending -->
+      <div class="h-section">
+        <div class="h-section-header"><div class="h-section-title">🔥 Trending</div></div>
+        <div class="h-row">
+          <div class="h-card"><div class="h-thumb"><img src="assets/images/wifi-woes-at-home.png" alt="" loading="lazy"><div class="h-thumb-scrim"></div><div class="h-thumb-name">Wi-Fi Woes at Home</div></div></div>
+          <div class="h-card"><div class="h-thumb"><img src="assets/images/public-prank-party.png" alt="" loading="lazy"><div class="h-thumb-scrim"></div><div class="h-thumb-name">Public Prank Party</div></div></div>
+          <div class="h-card"><div class="h-thumb"><img src="assets/images/coastal-secrets.png" alt="" loading="lazy"><div class="h-thumb-scrim"></div><div class="h-thumb-name">Coastal Secrets</div></div></div>
+          <div class="h-card"><div class="h-thumb"><img src="assets/images/kitchen-kadhai.png" alt="" loading="lazy"><div class="h-thumb-scrim"></div><div class="h-thumb-name">Kitchen Kadhai</div></div></div>
+        </div>
+      </div>
+
+      <!-- Romance Picks -->
+      <div class="h-section">
+        <div class="h-section-header"><div class="h-section-title">💕 Romance Picks</div></div>
+        <div class="h-row">
+          <div class="h-card"><div class="h-thumb"><img src="assets/images/love-at-first-sight.png" alt="" loading="lazy"><div class="h-thumb-scrim"></div><div class="h-thumb-name">Love at First Sight</div></div></div>
+          <div class="h-card"><div class="h-thumb"><img src="assets/images/rainy-rendezvous.png" alt="" loading="lazy"><div class="h-thumb-scrim"></div><div class="h-thumb-name">Rainy Rendezvous</div></div></div>
+          <div class="h-card"><div class="h-thumb"><img src="assets/images/kitchen-kadhai.png" alt="" loading="lazy"><div class="h-thumb-scrim"></div><div class="h-thumb-name">Kitchen Kadhai</div></div></div>
+          <div class="h-card"><div class="h-thumb"><img src="assets/images/coastal-secrets.png" alt="" loading="lazy"><div class="h-thumb-scrim"></div><div class="h-thumb-name">Coastal Secrets</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /screen-home -->
+
+  <!-- ══════ EXPLORE / SEARCH SCREEN ══════ -->
+  <div id="screen-explore" class="screen active">
 
   <!-- Status bar -->
   <div class="status-bar">
@@ -715,6 +1002,114 @@ html, body {
 
   <!-- Results area -->
   <div class="search-results" id="search-results"></div>
+
+  </div><!-- /screen-explore -->
+
+  <!-- ══════ MY LIST SCREEN ══════ -->
+  <div id="screen-mylist" class="screen">
+    <div class="status-bar">
+      <div class="time">9:41</div>
+      <div class="status-icons">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="white"><rect x="0" y="7" width="3" height="5" rx="0.8"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="0.8"/><rect x="9" y="2" width="3" height="10" rx="0.8"/><rect x="13.5" y="0" width="3" height="12" rx="0.8"/></svg>
+        <svg width="16" height="12" viewBox="0 0 24 18" fill="white"><path d="M12 5a14 14 0 0110.95 5.24l-2.1 2.1A11 11 0 0012 8a11 11 0 00-8.85 4.34l-2.1-2.1A14 14 0 0112 5zm0 5a9 9 0 016.97 3.3l-2.09 2.09A6 6 0 0012 13a6 6 0 00-4.88 2.39L5.03 13.3A9 9 0 0112 10zm0 5a4 4 0 013 1.35L12 19l-3-2.65A4 4 0 0112 15z"/></svg>
+        <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="0.5" y="0.5" width="22" height="12" rx="2" stroke="white" stroke-opacity="0.4"/><rect x="2" y="2" width="17" height="9" rx="1.2" fill="white"/><path d="M23.5 4.5v4a2 2 0 000-4z" fill="white" fill-opacity="0.4"/></svg>
+      </div>
+    </div>
+    <div class="ml-topbar">
+      <div class="ml-title">My List</div>
+      <div class="home-icon-btn" style="background:#1e1e1e;">
+        <svg width="18" height="18" fill="none" stroke="#929596" stroke-width="2.2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      </div>
+    </div>
+    <div class="ml-tabs">
+      <div class="ml-tab active">Saved (6)</div>
+      <div class="ml-tab">Downloads</div>
+    </div>
+    <div class="ml-scroll">
+      <div class="ml-grid">
+        <div class="ml-card"><img src="assets/images/love-at-first-sight.png" alt="" loading="lazy"><div class="ml-card-scrim"></div><div class="ml-card-genre">Romance</div><div class="ml-card-name">Love at First Sight</div></div>
+        <div class="ml-card"><img src="assets/images/coastal-secrets.png" alt="" loading="lazy"><div class="ml-card-scrim"></div><div class="ml-card-genre">Thriller</div><div class="ml-card-name">Coastal Secrets</div></div>
+        <div class="ml-card"><img src="assets/images/kitchen-kadhai.png" alt="" loading="lazy"><div class="ml-card-scrim"></div><div class="ml-card-genre">Slice of Life</div><div class="ml-card-name">Kitchen Kadhai</div></div>
+        <div class="ml-card"><img src="assets/images/rainy-rendezvous.png" alt="" loading="lazy"><div class="ml-card-scrim"></div><div class="ml-card-genre">Romance</div><div class="ml-card-name">Rainy Rendezvous</div></div>
+        <div class="ml-card"><img src="assets/images/super-subbus-challenge.png" alt="" loading="lazy"><div class="ml-card-scrim"></div><div class="ml-card-genre">Comedy</div><div class="ml-card-name">Super Subbu's Challenge</div></div>
+        <div class="ml-card"><img src="assets/images/public-prank-party.png" alt="" loading="lazy"><div class="ml-card-scrim"></div><div class="ml-card-genre">Comedy</div><div class="ml-card-name">Public Prank Party</div></div>
+      </div>
+    </div>
+  </div>
+  <!-- /screen-mylist -->
+
+  <!-- ══════ PROFILE SCREEN ══════ -->
+  <div id="screen-profile" class="screen">
+    <div class="status-bar">
+      <div class="time">9:41</div>
+      <div class="status-icons">
+        <svg width="17" height="12" viewBox="0 0 17 12" fill="white"><rect x="0" y="7" width="3" height="5" rx="0.8"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="0.8"/><rect x="9" y="2" width="3" height="10" rx="0.8"/><rect x="13.5" y="0" width="3" height="12" rx="0.8"/></svg>
+        <svg width="16" height="12" viewBox="0 0 24 18" fill="white"><path d="M12 5a14 14 0 0110.95 5.24l-2.1 2.1A11 11 0 0012 8a11 11 0 00-8.85 4.34l-2.1-2.1A14 14 0 0112 5zm0 5a9 9 0 016.97 3.3l-2.09 2.09A6 6 0 0012 13a6 6 0 00-4.88 2.39L5.03 13.3A9 9 0 0112 10zm0 5a4 4 0 013 1.35L12 19l-3-2.65A4 4 0 0112 15z"/></svg>
+        <svg width="26" height="13" viewBox="0 0 26 13" fill="none"><rect x="0.5" y="0.5" width="22" height="12" rx="2" stroke="white" stroke-opacity="0.4"/><rect x="2" y="2" width="17" height="9" rx="1.2" fill="white"/><path d="M23.5 4.5v4a2 2 0 000-4z" fill="white" fill-opacity="0.4"/></svg>
+      </div>
+    </div>
+    <div class="pf-topbar">
+      <div class="pf-title">Profile</div>
+      <div class="home-icon-btn" style="background:#1e1e1e;">
+        <svg width="18" height="18" fill="none" stroke="#929596" stroke-width="2.2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      </div>
+    </div>
+    <div class="pf-scroll">
+      <div class="pf-header">
+        <div class="pf-avatar">K</div>
+        <div class="pf-name">Karthika</div>
+        <div class="pf-email">karthika@example.com</div>
+        <div class="pf-plan">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="#673B21"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Premium Member
+        </div>
+      </div>
+      <div class="pf-stats">
+        <div class="pf-stat"><div class="pf-stat-num">24</div><div class="pf-stat-label">Shows</div></div>
+        <div class="pf-stat"><div class="pf-stat-num">148</div><div class="pf-stat-label">Episodes</div></div>
+        <div class="pf-stat"><div class="pf-stat-num">12</div><div class="pf-stat-label">Days</div></div>
+      </div>
+      <div class="pf-section-label">Account</div>
+      <div class="pf-menu-item">
+        <div class="pf-icon"><svg width="18" height="18" fill="none" stroke="#929596" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <div class="pf-text">Edit Profile</div>
+        <div class="pf-chevron"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
+      </div>
+      <div class="pf-menu-item">
+        <div class="pf-icon"><svg width="18" height="18" fill="none" stroke="#929596" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div>
+        <div class="pf-text">Subscription</div>
+        <div class="pf-badge">Premium</div>
+        <div class="pf-chevron" style="margin-left:8px;"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
+      </div>
+      <div class="pf-divider"></div>
+      <div class="pf-section-label">Preferences</div>
+      <div class="pf-menu-item">
+        <div class="pf-icon"><svg width="18" height="18" fill="none" stroke="#929596" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg></div>
+        <div class="pf-text">Notifications</div>
+        <div class="pf-chevron"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
+      </div>
+      <div class="pf-menu-item">
+        <div class="pf-icon"><svg width="18" height="18" fill="none" stroke="#929596" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+        <div class="pf-text">Language</div>
+        <div class="pf-chevron"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
+      </div>
+      <div class="pf-divider"></div>
+      <div class="pf-section-label">Support</div>
+      <div class="pf-menu-item">
+        <div class="pf-icon"><svg width="18" height="18" fill="none" stroke="#929596" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg></div>
+        <div class="pf-text">Help &amp; Support</div>
+        <div class="pf-chevron"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
+      </div>
+      <div class="pf-divider"></div>
+      <div class="pf-menu-item danger">
+        <div class="pf-icon"><svg width="18" height="18" fill="none" stroke="#FF6B81" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg></div>
+        <div class="pf-text">Log Out</div>
+      </div>
+    </div>
+  </div>
+  <!-- /screen-profile -->
+
+  </div><!-- /screens-container -->
 
   <!-- Bottom nav — Explore active -->
   <div class="bottom-nav">
@@ -1295,6 +1690,45 @@ document.querySelectorAll('.demo-btn').forEach(btn => {
 
 /* ── Init ── */
 renderDefault();
+
+/* ════════════════════════════════════
+   SCREEN NAVIGATION
+════════════════════════════════════ */
+const SCREENS = {
+  home:    document.getElementById('screen-home'),
+  explore: document.getElementById('screen-explore'),
+  mylist:  document.getElementById('screen-mylist'),
+  profile: document.getElementById('screen-profile'),
+};
+const screenOrder = ['home', 'explore', 'mylist', 'profile'];
+const navItems    = Array.from(document.querySelectorAll('.nav-item'));
+let currentScreen = 'explore';
+
+function navigateTo(id) {
+  if (id === currentScreen) return;
+  SCREENS[currentScreen].classList.remove('active');
+  /* Double rAF: let browser flush the removal before animating in */
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    SCREENS[id].classList.add('active');
+  }));
+  currentScreen = id;
+}
+
+navItems.forEach((item, i) => {
+  item.addEventListener('click', () => {
+    navItems.forEach(n => n.classList.remove('active'));
+    item.classList.add('active');
+    navigateTo(screenOrder[i]);
+  });
+});
+
+/* Home → search button: jump to Explore + focus input */
+document.getElementById('home-search-btn').addEventListener('click', () => {
+  navItems.forEach(n => n.classList.remove('active'));
+  navItems[1].classList.add('active'); /* Explore tab */
+  navigateTo('explore');
+  setTimeout(() => srInput.focus(), 320); /* wait for transition */
+});
 </script>
 </body>
 </html>
