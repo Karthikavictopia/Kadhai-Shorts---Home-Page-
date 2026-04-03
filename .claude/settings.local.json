@@ -19,7 +19,10 @@
       "mcp__claude_ai_Figma__get_metadata",
       "Skill(update-config)",
       "Bash(mv \"C:\\\\Claude Explore\\\\Kadhaishorts\\\\assets\\\\images\\\\Media \\(3\\).jpg\" \"C:\\\\Claude Explore\\\\Kadhaishorts\\\\assets\\\\images\\\\chai-shorts-search-explore.jpg\")",
-      "Bash(mv \"C:\\\\Claude Explore\\\\Kadhaishorts\\\\assets\\\\images\\\\Media \\(4\\).jpg\" \"C:\\\\Claude Explore\\\\Kadhaishorts\\\\assets\\\\images\\\\chai-shorts-search-results.jpg\")"
+      "Bash(mv \"C:\\\\Claude Explore\\\\Kadhaishorts\\\\assets\\\\images\\\\Media \\(4\\).jpg\" \"C:\\\\Claude Explore\\\\Kadhaishorts\\\\assets\\\\images\\\\chai-shorts-search-results.jpg\")",
+      "Bash(powershell.exe -NoProfile -ExecutionPolicy Bypass -File \"C:/Claude Explore/Kadhaishorts/compress_imgs.ps1\" 2>&1)",
+      "Bash(powershell.exe -NoProfile -ExecutionPolicy Bypass -File \"C:/Claude Explore/Kadhaishorts/gen_figma_code.ps1\" 2>&1)",
+      "Bash(powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \"\n\\\\$j = Get-Content 'C:\\\\\\\\Claude Explore\\\\\\\\Kadhaishorts\\\\\\\\thumb_b64.json' -Encoding UTF8 | ConvertFrom-Json\nWrite-Output \\\\$j.'wifi-woes-at-home'\n\" 2>&1)"
     ]
   }
 }

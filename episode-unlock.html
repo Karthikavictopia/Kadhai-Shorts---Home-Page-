@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Episode Unlock — Kadhai Shorts</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,600;0,700;0,900;1,900&display=swap" rel="stylesheet" />
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:             #0f0f0f;
+    --primary:        #cf2e4e;
+    --primary-light:  #ff6b81;
+    --white:          #ffffff;
+    --grey:           #5c5c5c;
+    --grey-text:      #929596;
+    --brand-gradient: linear-gradient(135deg, #F16623 0%, #E71F2C 30%, #991C4A 100%);
+  }
+
+  html, body {
+    background: #000;
+    font-family: 'Roboto', sans-serif;
+    color: var(--white);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100svh;
+  }
+
+  /* ── phone shell ── */
+  .phone {
+    width: 100%;
+    max-width: 430px;
+    height: 100svh;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ══════════════════════════════════
+     VIDEO PLAYER AREA
+  ══════════════════════════════════ */
+  .eu-video-area {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  /* Background thumbnail */
+  .eu-bg {
+    position: absolute;
+    inset: 0;
+    background-image: url('assets/images/home-turf-hijinks.png');
+    background-size: cover;
+    background-position: center top;
+  }
+
+  /* Dark overlay */
+  .eu-dark-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.52);
+  }
+
+  /* Top gradient — status bar + controls */
+  .eu-top-gradient {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0) 42%);
+    padding: 12px 20px 36px;
+    pointer-events: none;
+  }
+  .eu-top-gradient > * { pointer-events: auto; }
+
+  /* Status bar */
+  .eu-status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .eu-time {
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.2px;
+  }
+  .eu-status-icons { display: flex; gap: 5px; align-items: center; }
+
+  /* Back button */
+  .eu-back-btn {
+    width: 36px; height: 36px;
+    background: none; border: none; outline: none;
+    color: #fff; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    transition: background 0.15s;
+  }
+  .eu-back-btn:active { background: rgba(255,255,255,0.12); }
+
+  /* Kadhai watermark — top right of video */
+  .eu-watermark {
+    position: absolute;
+    top: 52px; right: 16px;
+    opacity: 0.72;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    pointer-events: none;
+  }
+  .eu-watermark img {
+    width: 28px; height: 28px;
+    object-fit: contain;
+    border-radius: 6px;
+  }
+  .eu-watermark span {
+    font-size: 8px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.6px;
+    text-align: center;
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+
+  /* Right-side vertical action panel */
+  .eu-actions-panel {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    align-items: center;
+    padding: 10px 4px;
+  }
+  .eu-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+  }
+  .eu-action-icon {
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  /* Small Text (12px) for video player chrome labels */
+  .eu-action-label {
+    font-size: 12px;
+    font-weight: 400;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  /* Centered lock state */
+  .eu-lock-center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -55%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+    padding-right: 48px; /* offset right panel */
+  }
+  .eu-lock-icon {
+    width: 52px; height: 52px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 2px;
+  }
+  /* Body Text (16px) — lock title */
+  .eu-lock-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+  }
+  /* Small Text (14px) — lock subtitle */
+  .eu-lock-sub {
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.82);
+  }
+
+  /* Seek bar info — bottom of video area */
+  .eu-seek-info {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    right: 72px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  /* Small Text repurposed as "New" badge label */
+  .eu-new-badge {
+    align-self: flex-start;
+    background: rgba(255,255,255,0.18);
+    border-radius: 4px;
+    padding: 3px 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+  /* Seek bar series — Body Text (16px), Black Italic */
+  .eu-seek-series {
+    font-size: 16px;
+    font-weight: 900;
+    font-style: italic;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    line-height: 1.2;
+  }
+  /* Small Text (14px) */
+  .eu-seek-ep-title {
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.88);
+  }
+  .eu-seek-ep-count {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.88);
+  }
+
+  /* ══════════════════════════════════
+     BOTTOM SHEET
+  ══════════════════════════════════ */
+  .eu-bottom-sheet {
+    background: var(--bg);
+    border-radius: 24px 24px 0 0;
+    padding: 0 24px 24px;
+    flex-shrink: 0;
+  }
+
+  .eu-drag-handle {
+    width: 45px; height: 3px;
+    background: var(--grey);
+    border-radius: 2px;
+    margin: 20px auto 0;
+  }
+
+  /* Header row */
+  .eu-sheet-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+    gap: 12px;
+  }
+  .eu-sheet-title-block {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+  /* H2 (20px Semi Bold) — section heading */
+  .eu-sheet-series {
+    font-size: 20px;
+    font-weight: 900;
+    font-style: italic;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+  /* Small Text (14px) — metadata */
+  .eu-sheet-ep-meta {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--grey-text);
+  }
+
+  /* Ticket badge */
+  .eu-ticket-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(207,46,78,0.12);
+    border: 1.5px solid rgba(207,46,78,0.30);
+    border-radius: 6px;
+    padding: 6px 12px 6px 10px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  /* Stacked ticket card icon */
+  .eu-tbc {
+    position: relative;
+    width: 20px; height: 16px;
+    flex-shrink: 0;
+  }
+  .eu-tbc-back {
+    position: absolute;
+    width: 12px; height: 11px;
+    border-radius: 2px;
+    background: linear-gradient(135deg, #be973a, #fbdb8d);
+    top: 0; left: 0;
+    transform: rotate(-6deg);
+  }
+  .eu-tbc-front {
+    position: absolute;
+    width: 14px; height: 12px;
+    border-radius: 2px;
+    background: linear-gradient(135deg, #F16623 0%, #E71F2C 50%, #991C4A 100%);
+    bottom: 0; right: 0;
+    transform: rotate(6deg);
+  }
+  /* Small Text (14px) */
+  .eu-ticket-badge span {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--primary-light);
+    white-space: nowrap;
+  }
+
+  /* Description — Body Text (16px) */
+  .eu-description {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--grey-text);
+    line-height: 1.65;
+    margin-top: 12px;
+  }
+
+  .eu-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.06);
+    margin: 14px 0;
+  }
+
+  /* Small Text (14px) — pricing hint */
+  .eu-pricing-hint {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--grey-text);
+    text-align: center;
+    margin-bottom: 14px;
+  }
+
+  /* ── Unlock option cards ── */
+  .eu-unlock-cards {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .eu-card {
+    flex: 1;
+    border-radius: 10px;       /* design system: standard button/card radius */
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+    min-height: 80px;
+  }
+  .eu-card:active { transform: scale(0.97); }
+
+  .eu-card-ep {
+    background: linear-gradient(44.7deg, rgba(72,68,69,0.5) 7.5%, rgba(143,141,131,0.3) 92.5%);
+    border: 1.5px solid var(--grey);
+  }
+  .eu-card-series {
+    background: linear-gradient(138.5deg, rgba(251,215,133,0.18) 33%, rgba(34,25,5,0.15) 121%);
+    border: 1.5px solid #be973a;
+    overflow: hidden;
+  }
+
+  .eu-card-label { display: flex; flex-direction: column; gap: 3px; }
+
+  /* Body Text (16px, Medium) — card heading */
+  .eu-card-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff;
+  }
+  /* Small Text (14px) — card sub-label */
+  .eu-card-sub {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--grey-text);
+  }
+  /* H2 (20px, Bold) — prominent price */
+  .eu-card-price {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .eu-card-price-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+    flex-shrink: 0;
+  }
+  .eu-card-price-main {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .eu-card-price-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  /* Small Text (14px) — strikethrough */
+  .eu-card-strikethrough {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--grey);
+    text-decoration: line-through;
+  }
+  .eu-card-discount {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fbdb8d;
+  }
+
+  /* Best Value ribbon */
+  .eu-best-value {
+    position: absolute;
+    top: 0; right: 0;
+    background: linear-gradient(90deg, #be973a, #fbdb8d);
+    border-radius: 0 0 0 6px;
+    padding: 2px 8px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #3a2208;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── Use 1 ticket row ── */
+  .eu-ticket-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(163.9deg, rgba(207,46,78,0.10) 7.7%, rgba(207,46,78,0.03) 92.3%);
+    border: 1.5px solid rgba(207,46,78,0.35);
+    border-radius: 10px;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+  }
+  .eu-ticket-row:active { transform: scale(0.98); }
+
+  .eu-ticket-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .eu-ticket-icon-wrap {
+    width: 24px; height: 24px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--brand-gradient);
+    border-radius: 4px;
+    flex-shrink: 0;
+    transform: rotate(6deg);
+  }
+  .eu-ticket-text { display: flex; flex-direction: column; gap: 1px; }
+
+  /* Body Text (16px, Medium) */
+  .eu-ticket-text-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff;
+  }
+  /* Small Text (14px) */
+  .eu-ticket-text-sub {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--grey-text);
+  }
+  /* Body Text (16px, SemiBold) — CTA */
+  .eu-redeem {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--primary-light);
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+
+<div class="phone">
+
+  <!-- ══════ VIDEO PLAYER AREA ══════ -->
+  <div class="eu-video-area">
+    <!-- Background thumbnail -->
+    <div class="eu-bg"></div>
+    <!-- Dark overlay -->
+    <div class="eu-dark-overlay"></div>
+
+    <!-- Top gradient: status bar + back button -->
+    <div class="eu-top-gradient">
+      <div class="eu-status-bar">
+        <span class="eu-time">6:12 PM</span>
+        <div class="eu-status-icons">
+          <!-- Signal -->
+          <svg width="17" height="12" viewBox="0 0 17 12" fill="white">
+            <rect x="0"    y="7"   width="3" height="5"    rx="0.8"/>
+            <rect x="4.5"  y="4.5" width="3" height="7.5"  rx="0.8"/>
+            <rect x="9"    y="2"   width="3" height="10"   rx="0.8"/>
+            <rect x="13.5" y="0"   width="3" height="12"   rx="0.8"/>
+          </svg>
+          <!-- Wi-Fi -->
+          <svg width="16" height="12" viewBox="0 0 24 18" fill="white">
+            <path d="M12 5a14 14 0 0110.95 5.24l-2.1 2.1A11 11 0 0012 8a11 11 0 00-8.85 4.34l-2.1-2.1A14 14 0 0112 5zm0 5a9 9 0 016.97 3.3l-2.09 2.09A6 6 0 0012 13a6 6 0 00-4.88 2.39L5.03 13.3A9 9 0 0112 10zm0 5a4 4 0 013 1.35L12 19l-3-2.65A4 4 0 0112 15z"/>
+          </svg>
+          <!-- Battery -->
+          <svg width="26" height="13" viewBox="0 0 26 13" fill="none">
+            <rect x="0.5" y="0.5" width="22" height="12" rx="2" stroke="white" stroke-opacity="0.4"/>
+            <rect x="2" y="2" width="17" height="9" rx="1.2" fill="white"/>
+            <path d="M23.5 4.5v4a2 2 0 000-4z" fill="white" fill-opacity="0.4"/>
+          </svg>
+        </div>
+      </div>
+      <button class="eu-back-btn" onclick="history.back()">
+        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Kadhai watermark -->
+    <div class="eu-watermark">
+      <img src="assets/images/Kadhaishorts Logo.png" alt="Kadhai Shorts"/>
+      <span>Kadhai<br>Shorts</span>
+    </div>
+
+    <!-- Right action panel -->
+    <div class="eu-actions-panel">
+      <!-- Settings -->
+      <div class="eu-action">
+        <div class="eu-action-icon">
+          <svg width="26" height="26" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+          </svg>
+        </div>
+        <span class="eu-action-label">Settings</span>
+      </div>
+      <!-- Likes -->
+      <div class="eu-action">
+        <div class="eu-action-icon">
+          <svg width="26" height="26" fill="none" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+          </svg>
+        </div>
+        <span class="eu-action-label">43.5k</span>
+      </div>
+      <!-- Episodes -->
+      <div class="eu-action">
+        <div class="eu-action-icon">
+          <svg width="26" height="26" fill="none" stroke="white" stroke-width="1.7" stroke-linecap="round" viewBox="0 0 24 24">
+            <line x1="8" y1="6"  x2="21" y2="6"/>
+            <line x1="8" y1="12" x2="21" y2="12"/>
+            <line x1="8" y1="18" x2="16" y2="18"/>
+            <circle cx="4" cy="6"  r="1.5" fill="white" stroke="none"/>
+            <circle cx="4" cy="12" r="1.5" fill="white" stroke="none"/>
+            <circle cx="4" cy="18" r="1.5" fill="white" stroke="none"/>
+          </svg>
+        </div>
+        <span class="eu-action-label">Episodes</span>
+      </div>
+      <!-- Share -->
+      <div class="eu-action">
+        <div class="eu-action-icon">
+          <svg width="26" height="26" fill="none" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <circle cx="18" cy="5"  r="3"/>
+            <circle cx="6"  cy="12" r="3"/>
+            <circle cx="18" cy="19" r="3"/>
+            <line x1="8.59"  y1="13.51" x2="15.42" y2="17.49"/>
+            <line x1="15.41" y1="6.51"  x2="8.59"  y2="10.49"/>
+          </svg>
+        </div>
+        <span class="eu-action-label">Share</span>
+      </div>
+    </div>
+
+    <!-- Centered lock state -->
+    <div class="eu-lock-center">
+      <div class="eu-lock-icon">
+        <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" fill="rgba(255,255,255,0.12)"/>
+          <path d="M7 11V7a5 5 0 0110 0v4"/>
+        </svg>
+      </div>
+      <p class="eu-lock-title">Episode 6 Locked</p>
+      <p class="eu-lock-sub">"YouTube Idea Gone Wrong?"</p>
+    </div>
+
+    <!-- Seek bar details -->
+    <div class="eu-seek-info">
+      <div class="eu-new-badge">New</div>
+      <p class="eu-seek-series">Home Turf Hijinks</p>
+      <p class="eu-seek-ep-title">Ep 2 — "Hallway Hijinks"</p>
+      <div class="eu-seek-ep-count">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="2.5"/>
+          <polygon points="10,8 10,16 17,12" fill="rgba(255,255,255,0.75)" stroke="none"/>
+        </svg>
+        <span>EP. 2 / 29</span>
+      </div>
+    </div>
+  </div><!-- /eu-video-area -->
+
+  <!-- ══════ BOTTOM SHEET ══════ -->
+  <div class="eu-bottom-sheet">
+    <div class="eu-drag-handle"></div>
+
+    <!-- Header: title block + ticket badge -->
+    <div class="eu-sheet-header">
+      <div class="eu-sheet-title-block">
+        <h2 class="eu-sheet-series">Home Turf Hijinks</h2>
+        <p class="eu-sheet-ep-meta">Ep 6 of 50 · Comedy</p>
+      </div>
+      <div class="eu-ticket-badge">
+        <div class="eu-tbc">
+          <div class="eu-tbc-back"></div>
+          <div class="eu-tbc-front"></div>
+        </div>
+        <span>1 ticket</span>
+      </div>
+    </div>
+
+    <!-- Episode description — Body Text 16px -->
+    <p class="eu-description">Ravi's viral YouTube idea backfires when his roommates turn it into a prank war — and the landlord gets involved.</p>
+
+    <div class="eu-divider"></div>
+
+    <!-- Pricing hint — Small Text 14px -->
+    <p class="eu-pricing-hint">First 5 episodes free · ₹2 per episode after</p>
+
+    <!-- Unlock option cards -->
+    <div class="eu-unlock-cards">
+
+      <!-- Episode only -->
+      <div class="eu-card eu-card-ep">
+        <div class="eu-card-label">
+          <p class="eu-card-title">Unlock episode</p>
+          <p class="eu-card-sub">Ep 6 only</p>
+        </div>
+        <p class="eu-card-price">₹2</p>
+      </div>
+
+      <!-- Full series — Best Value -->
+      <div class="eu-card eu-card-series">
+        <div class="eu-best-value">Best Value</div>
+        <div class="eu-card-label">
+          <p class="eu-card-title">Unlock series</p>
+          <p class="eu-card-sub">All 50 episodes</p>
+        </div>
+        <div class="eu-card-price-col">
+          <p class="eu-card-price-main">₹15</p>
+          <div class="eu-card-price-row">
+            <span class="eu-card-strikethrough">₹60</span>
+            <span class="eu-card-discount">75% off</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Use 1 ticket row -->
+    <div class="eu-ticket-row">
+      <div class="eu-ticket-left">
+        <div class="eu-ticket-icon-wrap">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="white">
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          </svg>
+        </div>
+        <div class="eu-ticket-text">
+          <p class="eu-ticket-text-title">Use 1 ticket</p>
+          <p class="eu-ticket-text-sub">Unlock the full series free</p>
+        </div>
+      </div>
+      <div class="eu-redeem">Redeem ›</div>
+    </div>
+
+  </div><!-- /eu-bottom-sheet -->
+
+</div><!-- /phone -->
+
+</body>
+</html>
