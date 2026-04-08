@@ -216,10 +216,6 @@ html, body {
 /* ════════════════════════════
    RESULTS SCREEN
 ════════════════════════════ */
-.results-count {
-  padding: 12px 16px 4px;
-  font-size: 15px; color: #b0b0b0;
-}
 .results-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -512,7 +508,6 @@ html, body {
 
     <!-- RESULTS -->
     <div class="screen" id="screen-results">
-      <div class="results-count" id="resultsCount"></div>
       <div class="results-grid" id="resultsGrid"></div>
     </div>
 
@@ -628,7 +623,6 @@ function artHTML(s) {
 }
 
 function renderResults(shows) {
-  $('resultsCount').textContent = `${shows.length} show${shows.length !== 1 ? 's' : ''} found`;
   resultsGrid.innerHTML = shows.map((s, i) => `
     <div class="r-card" style="animation-delay:${i*0.05}s">
       <div class="r-art ${s.img ? 'img-card-bg' : s.color}">${artHTML(s)}</div>
