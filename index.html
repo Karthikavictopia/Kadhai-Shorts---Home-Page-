@@ -121,7 +121,7 @@
       flex: 1;
       background: #2a2a2a;
       border: 1px solid rgba(255,255,255,0.09);
-      border-radius: 6px;
+      border-radius: 10px;
       display: flex; align-items: center; gap: 8px;
       padding: 9px 12px;
       transition: border-color 0.2s ease;
@@ -200,7 +200,7 @@
     .sr-section-header {
       display: flex; align-items: center;
       justify-content: space-between;
-      margin-bottom: 14px; padding: 0 20px;
+      margin-bottom: 14px; padding: 0 24px;
     }
     .sr-section-title {
       font-size: 20px; font-weight: 600;
@@ -220,7 +220,7 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 8px;
-      padding: 8px 16px 24px;
+      padding: 8px 24px 4px;
       animation: sr-fade-in 0.2s ease;
     }
 
@@ -230,7 +230,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 16px 10px;
+      padding: 10px 24px 10px;
       animation: fadeSlideUp 0.22s ease forwards;
     }
     .sr-results-label {
@@ -271,7 +271,7 @@
     }
 
     .search-shimmer {
-      padding: 12px 16px 0;
+      padding: 12px 24px 0;
       animation: fadeSlideUp 0.2s ease forwards;
     }
     .shimmer-title {
@@ -376,7 +376,7 @@
     .t10-row {
       display: flex; gap: 10px;
       overflow-x: auto; scrollbar-width: none;
-      padding: 0 20px 4px;
+      padding: 0 24px 4px;
       overscroll-behavior-x: contain;
       -webkit-overflow-scrolling: touch;
     }
@@ -487,9 +487,12 @@
 
     /* ── Trending keyword chips ── */
     .trending-chips {
-      display: flex; gap: 8px; flex-wrap: wrap;
-      padding: 0 20px 4px;
+      display: flex; gap: 8px; flex-wrap: nowrap;
+      padding: 0 24px 4px;
+      overflow-x: auto; scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
     }
+    .trending-chips::-webkit-scrollbar { display: none; }
     .trending-chip {
       display: flex; align-items: center; gap: 5px;
       height: 30px; padding: 0 12px;
@@ -539,7 +542,7 @@
     /* recent searches */
     .sr-recent-wrap {
       display: flex; flex-direction: column;
-      gap: 2px; padding: 0 16px;
+      gap: 2px; padding: 0 24px;
     }
     .sr-recent-chip {
       display: flex; align-items: center; gap: 10px;
@@ -568,7 +571,7 @@
     .search-empty {
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      gap: 14px; padding: 56px 28px;
+      gap: 14px; padding: 48px 24px 24px;
       text-align: center;
     }
     .search-empty-icon {
@@ -587,6 +590,93 @@
       color: var(--grey-text); line-height: 1.5;
     }
     .search-empty-sub strong { color: #FF6B81; font-weight: 500; }
+
+    /* ── Hero: single search result ── */
+    .sr-hero-wrap {
+      padding: 4px 24px 0;
+      animation: fadeSlideUp 0.28s ease forwards;
+    }
+    .sr-hero-card {
+      border-radius: 14px; overflow: hidden;
+      position: relative; height: 250px;
+      background: #1a1a1a; cursor: pointer;
+    }
+    .sr-hero-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%);
+      transform: translateX(-100%);
+      animation: shimmer-slide 1.6s ease-in-out infinite;
+      z-index: 1;
+    }
+    .sr-hero-card.img-loaded::before { display: none; }
+    .sr-hero-card img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: top center;
+      display: block; position: relative; z-index: 2;
+    }
+    .sr-hero-gradient {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.93) 0%, rgba(0,0,0,0.1) 60%, transparent 100%);
+      z-index: 3;
+    }
+    .sr-hero-genre-chip {
+      position: absolute; top: 12px; left: 12px;
+      background: var(--brand-gradient);
+      color: #fff; font-size: 11px; font-weight: 600;
+      padding: 3px 10px; border-radius: 8px; z-index: 4;
+    }
+    .sr-hero-ep-badge {
+      position: absolute; top: 12px; right: 12px;
+      background: rgba(20,20,20,0.88);
+      color: var(--primary-light);
+      font-size: 10px; font-weight: 500;
+      padding: 3px 8px; border-radius: 6px; z-index: 4;
+    }
+    .sr-hero-info {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 12px 14px; z-index: 4;
+    }
+    .sr-hero-title {
+      font-size: 20px; font-weight: 700;
+      color: #fff; line-height: 1.2; margin-bottom: 3px;
+    }
+    .sr-hero-meta {
+      font-size: 13px; font-weight: 400;
+      color: rgba(255,255,255,0.55);
+    }
+    .sr-hero-actions {
+      display: flex; gap: 10px;
+      padding: 12px 24px 0;
+      animation: fadeSlideUp 0.28s ease 0.06s both;
+    }
+    .sr-hero-btn-watch {
+      flex: 1; height: 42px;
+      background: var(--brand-gradient);
+      color: #fff;
+      font-family: 'Roboto', sans-serif;
+      font-size: 15px; font-weight: 500;
+      border: none; border-radius: 10px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: opacity 0.15s;
+    }
+    .sr-hero-btn-watch:active { opacity: 0.8; }
+    .sr-hero-btn-list {
+      height: 42px; padding: 0 18px;
+      background: transparent; color: var(--white);
+      font-family: 'Roboto', sans-serif;
+      font-size: 15px; font-weight: 500;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 10px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      white-space: nowrap;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .sr-hero-btn-list:active {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.35);
+    }
 
     /* grid fade-in */
     @keyframes sr-fade-in {
@@ -2262,9 +2352,9 @@
 
     const top10 = SERIES.slice(0, 10);
     const trendingHTML = `
-      <div class="sr-section" style="display:none;">
+      <div class="sr-section">
         <div class="sr-section-header">
-          <div class="sr-section-title">Trending</div>
+          <div class="sr-section-title">Trending Now</div>
         </div>
         <div class="trending-chips">
           ${TRENDING_KEYWORDS.map(k => `
@@ -2362,6 +2452,7 @@
         <span class="sr-count-badge">${badgeText}</span>
       </div>`;
 
+    /* ── Zero state ── */
     if (filtered.length === 0) {
       srResults.innerHTML = `
         ${headerHTML}
@@ -2373,25 +2464,103 @@
           </div>
           <div class="search-empty-title">No results found</div>
           <div class="search-empty-sub">${didYouMean(query, activeGenre)}</div>
+        </div>
+        <div class="sr-section" style="padding-bottom:24px;">
+          <div class="sr-section-header">
+            <div class="sr-section-title">Trending Now</div>
+          </div>
+          <div class="trending-chips">
+            ${TRENDING_KEYWORDS.map(k => `
+              <div class="trending-chip sr-zero-chip" data-keyword="${k}">
+                <span class="tc-fire">🔥</span>${k}
+              </div>`).join('')}
+          </div>
         </div>`;
+      srResults.querySelectorAll('.sr-zero-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          srInput.value = chip.dataset.keyword;
+          srClear.classList.add('visible');
+          addRecent(chip.dataset.keyword);
+          renderResults();
+        });
+      });
       return;
     }
 
+    /* "You Might Also Like" — curated RECOMMENDED list */
+    const suggestionsHTML = `
+      <div class="sr-section" style="padding: 12px 0 24px;">
+        <div class="sr-section-header">
+          <div class="sr-section-title">You Might Like</div>
+        </div>
+        <div class="search-grid">
+          ${RECOMMENDED.map(s => `
+            <div class="sr-thumb-card" data-title="${s.title}">
+              <img src="${s.image}" alt="${s.title}" loading="lazy">
+              <div class="sr-tc-gradient"></div>
+              <div class="sr-tc-name">${s.title}</div>
+            </div>`).join('')}
+        </div>
+      </div>`;
+
+    /* ── Hero: single result ── */
+    if (filtered.length === 1) {
+      const s = filtered[0];
+      const epCount = (SERIES.indexOf(s) % 5) + 6;
+      srResults.innerHTML = `
+        ${headerHTML}
+        <div class="sr-hero-wrap">
+          <div class="sr-hero-card" data-title="${s.title.replace(/"/g,'&quot;')}">
+            <img src="${s.image}" alt="${s.title}" loading="lazy">
+            <div class="sr-hero-gradient"></div>
+            <div class="sr-hero-genre-chip">${s.genre}</div>
+            <div class="sr-hero-ep-badge">${epCount} Episodes</div>
+            <div class="sr-hero-info">
+              <div class="sr-hero-title">${highlight(s.title, query)}</div>
+              <div class="sr-hero-meta">${epCount} Episodes · ${s.genre}</div>
+            </div>
+          </div>
+        </div>
+        <div class="sr-hero-actions">
+          <button type="button" class="sr-hero-btn-watch">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+            Watch Now
+          </button>
+          <button type="button" class="sr-hero-btn-list">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            My List
+          </button>
+        </div>
+        ${suggestionsHTML}`;
+      const heroImg = srResults.querySelector('.sr-hero-card img');
+      if (heroImg) {
+        const heroCard = srResults.querySelector('.sr-hero-card');
+        if (heroImg.complete && heroImg.naturalWidth > 0) { heroCard.classList.add('img-loaded'); }
+        else { heroImg.addEventListener('load', () => heroCard.classList.add('img-loaded'), { once: true }); }
+      }
+      srResults.querySelectorAll('.sr-thumb-card').forEach(card => {
+        card.addEventListener('click', () => { if (card.dataset.title) addRecent(card.dataset.title); });
+      });
+      return;
+    }
+
+    /* ── Multiple results grid ── */
     srResults.innerHTML = `
       ${headerHTML}
       <div class="search-grid">${filtered.map((s, i) => `
-        <div class="sr-thumb-card" data-title="${s.title}">
+        <div class="sr-thumb-card" data-title="${s.title.replace(/"/g,'&quot;')}">
           <img src="${s.image}" alt="${s.title}" loading="lazy">
+          <div class="sr-tc-gradient"></div>
+          <div class="sr-tc-name">${highlight(s.title, query)}</div>
           ${i < 3 ? '<div class="sr-trending-badge">🔥 Trending</div>' : ''}
         </div>`).join('')
-      }</div>`;
+      }</div>
+      ${suggestionsHTML}`;
 
-    /* result card click → save to recent */
     srResults.querySelectorAll('.sr-thumb-card').forEach(card => {
-      card.addEventListener('click', () => {
-        const title = card.dataset.title;
-        if (title) addRecent(title);
-      });
+      card.addEventListener('click', () => { if (card.dataset.title) addRecent(card.dataset.title); });
     });
   }
 

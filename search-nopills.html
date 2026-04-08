@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Kadhai Shorts — Search</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:             #0f0f0f;
+  --primary:        #cf2e4e;
+  --primary-light:  #ff6b81;
+  --white:          #ffffff;
+  --grey:           #5c5c5c;
+  --grey-text:      #929596;
+  --brand-gradient: linear-gradient(135deg, #F16623 0%, #E71F2C 30%, #991C4A 100%);
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: #111;
+  font-family: 'Roboto', sans-serif;
+  color: var(--white);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Demo bar ── */
+.demo-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 36px;
+  background: #080808;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex; align-items: center; gap: 8px;
+  padding: 0 14px; z-index: 999;
+}
+.demo-label { font-size: 11px; color: var(--grey-text); }
+#stateChip {
+  font-size: 11px; font-weight: 500;
+  color: var(--primary-light);
+  background: rgba(255,107,129,0.1);
+  padding: 2px 8px; border-radius: 4px;
+  transition: all 0.2s;
+}
+
+/* ── Phone shell ── */
+.phone {
+  max-width: 430px;
+  height: calc(100svh - 36px);
+  margin: 36px auto 0;
+  background: var(--bg);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ── Status bar ── */
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 24px 6px;
+  flex-shrink: 0;
+}
+.status-bar .time { font-size: 15px; font-weight: 600; }
+.status-icons { display: flex; gap: 6px; align-items: center; }
+
+/* ── Search header ── */
+.search-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 16px 10px;
+  flex-shrink: 0;
+}
+.icon-btn-round {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; cursor: pointer;
+  color: var(--white);
+  border-radius: 8px; border: none; background: none;
+  transition: background 0.15s;
+}
+.icon-btn-round:active { background: rgba(255,255,255,0.08); }
+
+.search-bar {
+  flex: 1;
+  background: #242424;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  display: flex; align-items: center;
+  padding: 0 14px;
+  height: 40px;
+  transition: border-color 0.2s;
+}
+.search-bar:focus-within { border-color: rgba(207,46,78,0.55); }
+.search-input {
+  flex: 1;
+  background: none; border: none; outline: none;
+  color: var(--white);
+  font-family: 'Roboto', sans-serif;
+  font-size: 15px; font-weight: 400;
+  caret-color: var(--primary);
+  min-width: 0;
+}
+.search-input::placeholder { color: var(--grey-text); }
+.clear-x {
+  display: none;
+  align-items: center; justify-content: center;
+  width: 18px; height: 18px;
+  background: var(--grey); border-radius: 50%;
+  border: none; cursor: pointer;
+  color: #fff; flex-shrink: 0;
+  transition: opacity 0.15s;
+}
+.clear-x.show { display: flex; }
+
+
+/* ── Scroll area ── */
+.scroll-area {
+  flex: 1; overflow-y: auto;
+  scrollbar-width: none;
+}
+.scroll-area::-webkit-scrollbar { display: none; }
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ════════════════════════════
+   EXPLORE SCREEN
+════════════════════════════ */
+.section-head {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 4px 16px 12px;
+}
+.section-title { font-size: 16px; font-weight: 600; }
+.trash-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--grey-text); display: flex; align-items: center;
+  padding: 4px; border-radius: 6px; transition: background 0.15s;
+}
+.trash-btn:active { background: rgba(255,255,255,0.06); }
+
+.recent-list { display: flex; flex-direction: column; padding: 0 16px; margin-bottom: 24px; }
+.recent-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  cursor: pointer;
+}
+.recent-row:last-child { border-bottom: none; }
+.recent-row:active .r-text { color: var(--primary-light); }
+.r-clock { color: var(--grey-text); flex-shrink: 0; }
+.r-text { flex: 1; font-size: 15px; }
+
+/* Top 10 */
+.top10-row {
+  display: flex; gap: 10px;
+  padding: 0 16px 32px;
+  overflow-x: auto; scrollbar-width: none;
+}
+.top10-row::-webkit-scrollbar { display: none; }
+
+.t10-card { flex-shrink: 0; width: 128px; cursor: pointer; }
+.t10-poster-wrap {
+  position: relative;
+  width: 128px; height: 172px;
+  margin-bottom: 20px;
+}
+.t10-art {
+  width: 100%; height: 100%;
+  border-radius: 10px; overflow: hidden; position: relative;
+  transition: opacity 0.15s;
+}
+.t10-card:active .t10-art { opacity: 0.8; }
+.t10-num {
+  position: absolute;
+  bottom: -8px; left: 4px;
+  font-size: 90px; font-weight: 900;
+  line-height: 1; font-style: italic;
+  color: rgba(15,15,15,0.28);
+  -webkit-text-stroke: 3px #ffffff;
+  filter: drop-shadow(0 2px 10px rgba(0,0,0,0.9));
+  pointer-events: none; user-select: none;
+  z-index: 10; letter-spacing: -2px;
+}
+.t10-title { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.t10-meta  { font-size: 12px; color: var(--grey-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+
+/* ════════════════════════════
+   SKELETON SCREEN
+════════════════════════════ */
+.skel-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 12px;
+  padding: 4px 16px 24px;
+}
+@keyframes shimmer {
+  0%   { background-position: -500px 0; }
+  100% { background-position:  500px 0; }
+}
+.skel {
+  background: linear-gradient(90deg, #1a1a1a 25%, #2c2c2c 50%, #1a1a1a 75%);
+  background-size: 1000px 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 10px;
+}
+.skel-poster { width: 100%; aspect-ratio: 3/4; margin-bottom: 8px; }
+.skel-line   { height: 12px; border-radius: 4px; margin-bottom: 6px; }
+.w90 { width: 90%; }
+.w65 { width: 65%; }
+.w45 { width: 45%; }
+
+/* ════════════════════════════
+   RESULTS SCREEN
+════════════════════════════ */
+.results-count {
+  padding: 12px 16px 4px;
+  font-size: 15px; color: #b0b0b0;
+}
+.results-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 12px;
+  padding: 4px 16px 32px;
+}
+.r-card { cursor: pointer; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.r-card { animation: fadeUp 0.22s ease both; }
+.r-card:nth-child(2) { animation-delay:.04s; }
+.r-card:nth-child(3) { animation-delay:.08s; }
+.r-card:nth-child(4) { animation-delay:.12s; }
+.r-card:nth-child(5) { animation-delay:.16s; }
+.r-card:nth-child(6) { animation-delay:.20s; }
+.r-card:nth-child(7) { animation-delay:.24s; }
+.r-card:nth-child(8) { animation-delay:.28s; }
+
+.r-art {
+  width: 100%; aspect-ratio: 3/4;
+  border-radius: 10px; overflow: hidden;
+  margin-bottom: 8px; position: relative;
+  transition: opacity 0.15s;
+}
+.r-card:active .r-art { opacity: 0.78; }
+.r-title {
+  font-size: 14px; font-weight: 500;
+  line-height: 1.35;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
+  margin-bottom: 3px;
+}
+.r-genres { font-size: 12px; color: var(--grey-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.r-lang   { font-size: 12px; color: var(--grey-text); margin-top: 1px; }
+
+/* ════════════════════════════
+   NO RESULTS SCREEN
+════════════════════════════ */
+.empty-wrap {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 64px 32px 32px;
+  text-align: center;
+}
+.empty-icon {
+  width: 68px; height: 68px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px; color: var(--grey);
+}
+.empty-h { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+.empty-q { color: var(--primary-light); }
+.empty-p { font-size: 14px; color: var(--grey-text); line-height: 1.55; }
+
+/* ════════════════════════════
+   DETAIL OVERLAY
+════════════════════════════ */
+.detail {
+  position: absolute; inset: 0;
+  background: var(--bg);
+  z-index: 100;
+  display: flex; flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.22, 0.8, 0.32, 1);
+  overflow: hidden;
+}
+.detail.open { transform: translateX(0); }
+
+.d-hero {
+  width: 100%; height: 310px;
+  position: relative; flex-shrink: 0;
+}
+.d-art {
+  width: 100%; height: 100%; position: relative;
+}
+.d-art::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 130px;
+  background: linear-gradient(to bottom, transparent, var(--bg));
+}
+.d-back {
+  position: absolute; top: 14px; left: 14px;
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(6px);
+  border: none; cursor: pointer;
+  color: var(--white); border-radius: 8px; z-index: 10;
+  transition: background 0.15s;
+}
+.d-back:active { background: rgba(0,0,0,0.75); }
+.d-hero-title {
+  position: absolute;
+  bottom: 14px; left: 16px; right: 16px;
+  font-size: 22px; font-weight: 700;
+  text-shadow: 0 2px 14px rgba(0,0,0,0.9);
+  z-index: 5;
+}
+
+.d-body {
+  flex: 1; overflow-y: auto; scrollbar-width: none;
+  padding: 14px 16px 32px;
+}
+.d-body::-webkit-scrollbar { display: none; }
+
+.d-meta-row {
+  display: flex; align-items: center; gap: 10px;
+  flex-wrap: wrap; margin-bottom: 10px;
+}
+.d-badge {
+  font-size: 12px; font-weight: 500; color: var(--grey-text);
+  background: rgba(255,255,255,0.07);
+  padding: 3px 8px; border-radius: 4px;
+}
+.d-rating { font-size: 13px; font-weight: 600; color: #f9d684; display: flex; align-items: center; gap: 4px; }
+.d-genre-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.d-gtag {
+  font-size: 12px; color: var(--primary-light);
+  border: 1px solid rgba(255,107,129,0.3);
+  padding: 3px 10px; border-radius: 6px;
+}
+.d-desc {
+  font-size: 14px; color: rgba(255,255,255,0.72);
+  line-height: 1.65; margin-bottom: 20px;
+}
+.watch-btn {
+  width: 100%; height: 46px;
+  background: var(--brand-gradient);
+  border: none; border-radius: 10px;
+  color: #fff; font-family: 'Roboto', sans-serif;
+  font-size: 15px; font-weight: 500;
+  cursor: pointer; margin-bottom: 26px;
+  transition: opacity 0.15s;
+}
+.watch-btn:active { opacity: 0.85; }
+.ep-section-title { font-size: 16px; font-weight: 600; margin-bottom: 12px; }
+.ep-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  cursor: pointer;
+}
+.ep-row:last-child { border-bottom: none; }
+.ep-thumb { width: 80px; height: 52px; border-radius: 6px; overflow: hidden; flex-shrink: 0; position: relative; }
+.ep-info  { flex: 1; }
+.ep-num   { font-size: 11px; color: var(--grey-text); margin-bottom: 2px; }
+.ep-title { font-size: 13px; font-weight: 500; }
+.ep-dur   { font-size: 11px; color: var(--grey-text); margin-top: 2px; }
+.ep-play  { color: var(--grey-text); flex-shrink: 0; }
+
+/* ── Poster fills ── */
+.p-rose    { background: linear-gradient(155deg, #3b1a4a 0%, #7b2d5a 55%, #c0485a 100%); }
+.p-ocean   { background: linear-gradient(155deg, #0e2a45 0%, #1e5a82 55%, #2d8fb0 100%); }
+.p-forest  { background: linear-gradient(155deg, #142b14 0%, #2d6030 55%, #4a9050 100%); }
+.p-amber   { background: linear-gradient(155deg, #3a1f04 0%, #7a4010 55%, #c07830 100%); }
+.p-indigo  { background: linear-gradient(155deg, #141440 0%, #2d2d82 55%, #4848b0 100%); }
+.p-crimson { background: linear-gradient(155deg, #400a14 0%, #821a30 55%, #c03060 100%); }
+.p-gold    { background: linear-gradient(155deg, #3a2c04 0%, #7a5e14 55%, #b09230 100%); }
+.p-teal    { background: linear-gradient(155deg, #042828 0%, #147878 55%, #28b0b0 100%); }
+.p-purple  { background: linear-gradient(155deg, #280840 0%, #541878 55%, #9030b0 100%); }
+.p-ember   { background: linear-gradient(155deg, #401008 0%, #823020 55%, #c05840 100%); }
+
+/* real images inside art divs */
+.art-img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  border-radius: inherit;
+}
+/* gradient scrim so title text stays readable over photos */
+.art-scrim {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.08) 55%, transparent 100%);
+  pointer-events: none; border-radius: inherit;
+}
+.poster-lbl {
+  position: absolute;
+  bottom: 10px; left: 10px; right: 10px;
+  font-size: 13px; font-weight: 700;
+  color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.9);
+  line-height: 1.2;
+  z-index: 2;
+}
+
+/* neutral bg for image cards — prevents gradient flash while image loads */
+.img-card-bg { background: #1c1c1c; }
+
+
+/* ── Tap press feedback ── */
+.t10-card { transition: transform 0.12s ease; }
+.t10-card:active { transform: scale(0.95); }
+.r-art    { transition: transform 0.12s ease, opacity 0.12s ease; }
+.r-card:active .r-art { transform: scale(0.96); opacity: 0.82; }
+.ep-row   { transition: background 0.12s; }
+.ep-row:active { background: rgba(255,255,255,0.04); }
+</style>
+</head>
+<body>
+
+<!-- State indicator -->
+<div class="demo-bar">
+  <span class="demo-label">Search flow ·</span>
+  <span id="stateChip">Explore</span>
+</div>
+
+<!-- Phone -->
+<div class="phone">
+
+  <!-- Status bar -->
+  <div class="status-bar">
+    <span class="time">10:17</span>
+    <div class="status-icons">
+      <svg width="16" height="12" viewBox="0 0 24 18" fill="currentColor">
+        <path d="M12 14a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm0-5a7 7 0 0 1 4.95 2.05l-1.41 1.41A5 5 0 0 0 12 11a5 5 0 0 0-3.54 1.46L7.05 11.05A7 7 0 0 1 12 9zm0-5a12 12 0 0 1 8.49 3.51l-1.42 1.42A10 10 0 0 0 12 6a10 10 0 0 0-7.07 2.93L3.51 7.51A12 12 0 0 1 12 4z"/>
+      </svg>
+      <svg width="14" height="12" viewBox="0 0 14 12" fill="currentColor">
+        <rect x="0" y="9" width="2.5" height="3" rx="0.4"/>
+        <rect x="3.5" y="6" width="2.5" height="6" rx="0.4"/>
+        <rect x="7" y="3" width="2.5" height="9" rx="0.4"/>
+        <rect x="10.5" y="0" width="2.5" height="12" rx="0.4"/>
+      </svg>
+      <svg width="24" height="11" viewBox="0 0 24 11" fill="none">
+        <rect x="0.5" y="0.5" width="20" height="10" rx="2.5" stroke="currentColor" stroke-opacity="0.45"/>
+        <rect x="2" y="2" width="15" height="7" rx="1.5" fill="currentColor"/>
+        <path d="M21.5 3.5v4a2 2 0 0 0 0-4z" fill="currentColor" opacity="0.4"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Search header -->
+  <div class="search-header">
+    <button class="icon-btn-round" id="backBtn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <div class="search-bar">
+      <input class="search-input" id="searchInput" type="text" placeholder="Search series, genre or mood..." autocomplete="off" spellcheck="false" />
+      <button class="clear-x" id="clearX">
+        <svg width="9" height="9" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <path d="M1 1l10 10M11 1L1 11"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+
+  <!-- Scroll area (screens) -->
+  <div class="scroll-area" id="scrollArea">
+
+    <!-- EXPLORE -->
+    <div class="screen active" id="screen-explore">
+
+      <div id="recentSection">
+        <div class="section-head">
+          <span class="section-title">Recent Searches</span>
+          <button class="trash-btn" id="clearRecentBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+              <path d="M10 11v6M14 11v6"/>
+              <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+            </svg>
+          </button>
+        </div>
+        <div class="recent-list" id="recentList"></div>
+      </div>
+
+      <div class="section-head" style="margin-top:4px">
+        <span class="section-title">Top 3 for you</span>
+      </div>
+      <div class="top10-row" id="top10Row"></div>
+    </div>
+
+    <!-- SKELETON -->
+    <div class="screen" id="screen-skeleton">
+      <div class="skel-grid">
+        <div><div class="skel skel-poster"></div><div class="skel skel-line w90"></div><div class="skel skel-line w65"></div><div class="skel skel-line w45"></div></div>
+        <div><div class="skel skel-poster"></div><div class="skel skel-line w90"></div><div class="skel skel-line w65"></div><div class="skel skel-line w45"></div></div>
+        <div><div class="skel skel-poster"></div><div class="skel skel-line w90"></div><div class="skel skel-line w65"></div><div class="skel skel-line w45"></div></div>
+        <div><div class="skel skel-poster"></div><div class="skel skel-line w90"></div><div class="skel skel-line w65"></div><div class="skel skel-line w45"></div></div>
+        <div><div class="skel skel-poster"></div><div class="skel skel-line w90"></div><div class="skel skel-line w65"></div><div class="skel skel-line w45"></div></div>
+        <div><div class="skel skel-poster"></div><div class="skel skel-line w90"></div><div class="skel skel-line w65"></div><div class="skel skel-line w45"></div></div>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="screen" id="screen-results">
+      <div class="results-count" id="resultsCount"></div>
+      <div class="results-grid" id="resultsGrid"></div>
+    </div>
+
+    <!-- NO RESULTS -->
+    <div class="screen" id="screen-empty">
+      <div class="empty-wrap">
+        <div class="empty-icon">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            <line x1="8" y1="11" x2="14" y2="11" opacity=".5"/>
+          </svg>
+        </div>
+        <div class="empty-h">No results for <span class="empty-q" id="emptyQuery"></span></div>
+        <p class="empty-p" style="margin-top:8px">Try a different keyword or browse by genre above</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Detail overlay -->
+  <div class="detail" id="detail">
+    <div class="d-hero">
+      <div class="d-art" id="dArt">
+        <span class="poster-lbl" id="dHeroTitle" style="font-size:19px; bottom:18px;"></span>
+      </div>
+      <button class="d-back" id="dBackBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+      </button>
+    </div>
+    <div class="d-body">
+      <div class="d-meta-row" id="dMeta"></div>
+      <div class="d-genre-row" id="dGenres"></div>
+      <div class="d-desc" id="dDesc"></div>
+      <button class="watch-btn">Watch Now</button>
+      <div class="ep-section-title">Episodes</div>
+      <div id="dEpisodes"></div>
+    </div>
+  </div>
+
+</div><!-- /phone -->
+
+<script>
+/* ─── DATA ─── */
+const SHOWS = [
+  { id:1,  title:'Love at First Sight',     genres:['Romance'],         lang:'Tamil',        color:'p-rose',    ep:6,  rating:'4.2', img:'assets/images/love-at-first-sight.png',   desc:'Two students. One corridor. A glance that changed everything. A sweet campus love story told in six short episodes.' },
+  { id:2,  title:'Rainy Rendezvous',        genres:['Romance'],         lang:'Tamil',        color:'p-ocean',   ep:4,  rating:'4.5', img:'assets/images/rainy-rendezvous.png',       desc:'A chance meeting under one umbrella during a downpour. What starts as shelter becomes something neither expected.' },
+  { id:3,  title:'Public Prank Party',      genres:['Comedy'],          lang:'Tamil, Hindi', color:'p-gold',    ep:5,  rating:'4.3', img:'assets/images/public-prank-party.png',     desc:'A father-daughter duo who take their prank game way too far — in public. Chaos, laughter, and zero regrets.' },
+  { id:4,  title:'Home Turf Hijinks',       genres:['Comedy'],          lang:'Tamil',        color:'p-amber',   ep:6,  rating:'4.1', img:'assets/images/home-turf-hijinks.png',      desc:'One son returns home with a selfie stick and a whole lot of attitude. His family has other plans.' },
+  { id:5,  title:'Coastal Secrets',         genres:['Slice of Life'],   lang:'Tamil',        color:'p-teal',    ep:5,  rating:'4.4', img:'assets/images/coastal-secrets.png',        desc:'A woman by the sea carries a story no one has heard. A quiet, powerful drama set on the Tamil coast.' },
+  { id:6,  title:'Kitchen Kadhai',          genres:['Slice of Life'],   lang:'Tamil',        color:'p-amber',   ep:4,  rating:'4.7', img:'assets/images/kitchen-kadhai.png',         desc:'A young mother, a curious toddler, and a kitchen full of warmth. Stories simmered slow — just like the best food.' },
+  { id:7,  title:"Super Subbu's Challenge", genres:['Comedy'],          lang:'Tamil',        color:'p-forest',  ep:5,  rating:'4.3', img:'assets/images/super-subbus-challenge.png', desc:'Subbu the delivery guy versus one stubborn chicken on the most important delivery of his life. Truly unhinged.' },
+  { id:8,  title:'Wi-Fi Woes at Home',      genres:['Slice of Life'],   lang:'Tamil',        color:'p-indigo',  ep:6,  rating:'4.0', img:'assets/images/wifi-woes-at-home.png',      desc:'The router goes down. The entire joint family goes up in arms. A hilariously relatable slice-of-life comedy.' },
+  { id:9,  title:'Night Secret',            genres:['Thriller'],        lang:'Tamil',        color:'p-rose',    ep:5,  rating:'4.6', img:'assets/images/Night Secret.png',           imgPos:'bottom', desc:'When the city sleeps, a security guard discovers a hidden truth about the building he has been protecting for years.' },
+  { id:10, title:'Locked Room',             genres:['Thriller'],        lang:'Tamil',        color:'p-indigo',  ep:4,  rating:'4.5', img:'assets/images/Locked Room.png',            imgPos:'bottom', desc:'Four strangers wake up in a sealed room with no memory of how they got there. Every minute counts. Every clue cuts deep.' },
+];
+const TOP10_IDS = [1, 2, 7];
+const EP_DURATIONS = [9,11,8,13,10,12,9,14,11,8];
+
+/* ─── STATE ─── */
+let screen      = 'explore';
+let prevScreen  = 'explore';
+let detailOpen  = false;
+let searchTimer = null;
+let lastQuery   = '';
+let recentSearches = ['Coastal Secrets', 'Romance', 'Comedy', 'Kitchen Kadhai', 'Slice of Life'];
+
+/* ─── ELEMENTS ─── */
+const $ = id => document.getElementById(id);
+const searchInput   = $('searchInput');
+const clearX        = $('clearX');
+const backBtn       = $('backBtn');
+const detail        = $('detail');
+const dBackBtn      = $('dBackBtn');
+const stateChip     = $('stateChip');
+const resultsGrid   = $('resultsGrid');
+const recentList    = $('recentList');
+const top10Row      = $('top10Row');
+const emptyQuery    = $('emptyQuery');
+const scrollArea    = $('scrollArea');
+const searchHeader  = document.querySelector('.search-header');
+
+/* ─── SCREEN SWITCHER ─── */
+const LABELS = { explore:'Explore', skeleton:'Loading…', results:'Results', empty:'No Results' };
+
+function goTo(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $('screen-' + name).classList.add('active');
+  screen = name;
+  scrollArea.scrollTop = 0;
+  stateChip.textContent = LABELS[name] || name;
+}
+
+/* ─── FILTER ─── */
+function filterShows(q, genre) {
+  const lq = q.toLowerCase();
+  return SHOWS.filter(s => {
+    const matchQ = !lq ||
+      s.title.toLowerCase().includes(lq) ||
+      s.genres.some(g => g.toLowerCase().includes(lq)) ||
+      s.lang.toLowerCase().includes(lq);
+    const matchG = !genre || s.genres.includes(genre);
+    return matchQ && matchG;
+  });
+}
+
+/* ─── RENDER RESULTS ─── */
+function artHTML(s) {
+  return s.img
+    ? `<img class="art-img" src="${s.img}" alt="${s.title}" loading="lazy"${s.imgPos ? ` style="object-position:${s.imgPos}"` : ''}>`
+    : '';
+}
+
+function renderResults(shows) {
+  $('resultsCount').textContent = `${shows.length} show${shows.length !== 1 ? 's' : ''} found`;
+  resultsGrid.innerHTML = shows.map((s, i) => `
+    <div class="r-card" style="animation-delay:${i*0.05}s">
+      <div class="r-art ${s.img ? 'img-card-bg' : s.color}">${artHTML(s)}</div>
+      <div class="r-title">${s.title}</div>
+      <div class="r-genres">${s.genres.join(', ')}</div>
+      <div class="r-lang">${s.lang}</div>
+    </div>`).join('');
+}
+
+/* ─── RUN SEARCH ─── */
+function runSearch() {
+  const q = lastQuery.trim();
+  const found = filterShows(q, null);
+  if (found.length) {
+    renderResults(found);
+    goTo('results');
+  } else {
+    emptyQuery.textContent = `"${q}"`;
+    goTo('empty');
+  }
+}
+
+function saveRecent(q) {
+  if (q && !recentSearches.includes(q)) {
+    recentSearches.unshift(q);
+    if (recentSearches.length > 5) recentSearches.pop();
+    renderRecent();
+  }
+}
+
+/* ─── INPUT ─── */
+searchInput.addEventListener('input', () => {
+  const raw = searchInput.value;
+  const q   = raw.trim();
+  lastQuery = q;
+
+  clearX.classList.toggle('show', raw.length > 0);
+  searchHeader.classList.toggle('searching', raw.length > 0);
+
+  if (!q) {
+    clearTimeout(searchTimer);
+    goTo('explore');
+    return;
+  }
+
+  // show skeleton immediately on first char
+  goTo('skeleton');
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(runSearch, 380);
+});
+
+searchInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const q = lastQuery.trim();
+    clearTimeout(searchTimer);
+    saveRecent(q);
+    runSearch();
+    searchInput.blur();
+  }
+});
+
+clearX.addEventListener('click', () => {
+  searchInput.value = '';
+  clearX.classList.remove('show');
+  searchHeader.classList.remove('searching');
+  clearTimeout(searchTimer);
+  lastQuery = '';
+  goTo('explore');
+  searchInput.focus();
+});
+
+/* ─── BACK BUTTON ─── */
+backBtn.addEventListener('click', () => {
+  if (detailOpen) { closeDetail(); return; }
+  if (screen !== 'explore') {
+    searchInput.value = '';
+    clearX.classList.remove('show');
+    searchHeader.classList.remove('searching');
+    clearTimeout(searchTimer);
+    lastQuery = '';
+    goTo('explore');
+  }
+});
+
+
+/* ─── DETAIL ─── */
+function openDetail(id) {
+  const s = SHOWS.find(x => x.id === id);
+  if (!s) return;
+  prevScreen = screen;
+
+  const dArt = $('dArt');
+  dArt.className = 'd-art ' + s.color;
+  // hero image or gradient fallback
+  const existing = dArt.querySelector('.art-img');
+  if (existing) existing.remove();
+  const scrim = dArt.querySelector('.art-scrim');
+  if (scrim) scrim.remove();
+  if (s.img) {
+    const img = document.createElement('img');
+    img.className = 'art-img';
+    img.src = s.img;
+    img.alt = s.title;
+    img.style.borderRadius = '0';
+    dArt.insertBefore(img, dArt.firstChild);
+    const sc = document.createElement('span');
+    sc.className = 'art-scrim';
+    sc.style.borderRadius = '0';
+    dArt.insertBefore(sc, img.nextSibling);
+  }
+  $('dHeroTitle').textContent = s.title;
+  $('dMeta').innerHTML = `
+    <span class="d-rating">★ ${s.rating}</span>
+    <span class="d-badge">${s.ep} Episodes</span>
+    <span class="d-badge">${s.lang}</span>
+  `;
+  $('dGenres').innerHTML = s.genres.map(g => `<span class="d-gtag">${g}</span>`).join('');
+  $('dDesc').textContent = s.desc;
+  $('dEpisodes').innerHTML = Array.from({ length: Math.min(s.ep, 4) }, (_, i) => `
+    <div class="ep-row">
+      <div class="ep-thumb ${s.color}"></div>
+      <div class="ep-info">
+        <div class="ep-num">Episode ${i+1}</div>
+        <div class="ep-title">${s.title} — Part ${i+1}</div>
+        <div class="ep-dur">${EP_DURATIONS[i]} min</div>
+      </div>
+      <span class="ep-play">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+      </span>
+    </div>`).join('');
+
+  detail.classList.add('open');
+  detail.querySelector('.d-body').scrollTop = 0;
+  detailOpen = true;
+  stateChip.textContent = 'Detail';
+}
+
+function closeDetail() {
+  detail.classList.remove('open');
+  detailOpen = false;
+  stateChip.textContent = LABELS[prevScreen] || prevScreen;
+}
+
+dBackBtn.addEventListener('click', closeDetail);
+
+/* ─── RECENT SEARCHES ─── */
+function renderRecent() {
+  const section = $('recentSection');
+  if (!recentSearches.length) {
+    section.style.display = 'none';
+    return;
+  }
+  section.style.display = '';
+  recentList.innerHTML = recentSearches.map(r => `
+    <div class="recent-row" onclick="tapRecent('${r}')">
+      <span class="r-clock">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+      </span>
+      <span class="r-text">${r}</span>
+    </div>`).join('');
+}
+
+function tapRecent(q) {
+  searchInput.value = q;
+  lastQuery = q;
+  clearX.classList.add('show');
+  goTo('skeleton');
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(runSearch, 380);
+}
+
+$('clearRecentBtn').addEventListener('click', () => {
+  recentSearches = [];
+  renderRecent();
+});
+
+/* ─── TOP 10 ─── */
+function renderTop10() {
+  top10Row.innerHTML = TOP10_IDS.map((id, idx) => {
+    const s = SHOWS.find(x => x.id === id);
+    if (!s) return '';
+    return `
+      <div class="t10-card">
+        <div class="t10-poster-wrap">
+          <div class="t10-art ${s.img ? 'img-card-bg' : s.color}">${artHTML(s)}</div>
+          <span class="t10-num"${idx === 0 ? ' style="left:-10px"' : ''}>${idx+1}</span>
+        </div>
+        <div class="t10-title">${s.title}</div>
+        <div class="t10-meta">${s.genres.join(', ')}</div>
+      </div>`;
+  }).join('');
+}
+
+/* ─── INIT ─── */
+renderRecent();
+renderTop10();
+</script>
+</body>
+</html>
